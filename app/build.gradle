@@ -1,6 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id("kotlin-android")
+    id "org.jetbrains.kotlin.plugin.serialization" version "1.5.31"
+    id("com.apollographql.apollo3").version("3.7.3")
 }
 
 android {
@@ -63,4 +66,22 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
+
+
+    //apollo
+    implementation("com.apollographql.apollo3:apollo-runtime:3.7.3")
+    implementation 'com.apollographql.apollo:apollo-android-support:1.0.0'
+    implementation("com.apollographql.apollo3:apollo-normalized-cache-sqlite:3.7.3")
+    // optional: if you just want the generated models and parsers and write your own HTTP code/cache code, you can remove apollo-runtime
+    // and use apollo-api instead
+    implementation("com.apollographql.apollo3:apollo-api:3.7.3")
+    // lifecycle
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
+    //okhttp3
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.2'
+    implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.6"
+}
+apollo {
+    packageName.set("com.example.rick_and_morty")
+    generateKotlinModels.set(true)
 }
