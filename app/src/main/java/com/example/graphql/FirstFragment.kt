@@ -57,6 +57,7 @@ class FirstFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             val result = clent.query(CharactersListQuery()).execute()
             result.data?.let { data ->
+                data.characters?.results
                 val list = data.characters?.results
                 val text =  StringBuilder()
                 withContext(Dispatchers.Main) {
