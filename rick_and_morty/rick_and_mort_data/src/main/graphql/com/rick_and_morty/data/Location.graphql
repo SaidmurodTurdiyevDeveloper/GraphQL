@@ -1,0 +1,67 @@
+query LocationList($page: Int!){
+    locations(page: $page){
+        info {
+            count
+            pages
+            next
+            prev
+        }
+        results {
+            id
+            dimension
+            name
+            type
+            created
+        }
+    }
+}
+query LocationListWithFilter($filter :FilterLocation!,$page: Int!){
+    locations(filter: $filter,page: $page){
+        info {
+            count
+            pages
+            next
+            prev
+        }
+        results {
+            id
+            dimension
+            name
+            type
+            created
+        }
+    }
+}
+
+query Location($id: ID!){
+    location(id: $id){
+        dimension
+        name
+        type
+        created
+        residents {
+            id
+            name
+            status
+            image
+            created
+        }
+    }
+}
+query LocationsWithIds($ids:[ID!]!){
+    locationsByIds(ids:$ids){
+        dimension
+        name
+        type
+        created
+        residents {
+            id
+            name
+            status
+            image
+            created
+        }
+    }
+}
+
+

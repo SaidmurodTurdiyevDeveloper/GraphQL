@@ -11,6 +11,13 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/buildSrc" />
+            <option value="$PROJECT_DIR$/common" />
+            <option value="$PROJECT_DIR$/common/common_utills" />
+            <option value="$PROJECT_DIR$/rick_and_morty" />
+            <option value="$PROJECT_DIR$/rick_and_morty/domen" />
+            <option value="$PROJECT_DIR$/rick_and_morty/presenter" />
+            <option value="$PROJECT_DIR$/rick_and_morty/rick_and_mort_data" />
           </set>
         </option>
       </GradleProjectSettings>

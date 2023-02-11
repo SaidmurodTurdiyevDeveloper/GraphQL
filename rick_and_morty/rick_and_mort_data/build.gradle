@@ -1,0 +1,66 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-kapt'
+    id "org.jetbrains.kotlin.plugin.serialization" version "1.5.31"
+    id("com.apollographql.apollo3").version("3.7.3")
+}
+
+android {
+    namespace = "com.rick_and_morty.rick_and_mort_data"
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 24
+        targetSdk 33
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation project(path: ':common:common_utills')
+
+    implementation Deps.core
+    implementation Deps.app_compat
+    implementation Deps.material
+    testImplementation Tests.j_unit
+    androidTestImplementation AndroidTest.j_unit
+    androidTestImplementation AndroidTest.espresso
+
+    //Apollo
+    implementation Apollo.apollo_runtime
+    implementation Apollo.apollo_support
+    implementation Apollo.apollo_sqlite
+    implementation Apollo.apollo_api
+    //Timber
+    implementation Deps.timber
+    // Hilt dependencies
+    implementation Dagger.hilt
+    kapt Dagger.hilt_compiler
+    //Coroutines
+    implementation Coroutine.core
+    implementation Coroutine.android
+    // Coroutine Lifecycle scope
+    implementation LifeCycle.runtime
+}
+apollo {
+    packageName.set("com.rick_and_morty.data_graphql")
+    generateKotlinModels.set(true)
+}

@@ -1,22 +1,20 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
 }
 
 android {
-    namespace 'com.rick_and_morty.rickandmortygraphql'
+    namespace 'com.rick_and_morty.presenter'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.rick_and_morty.rickandmortygraphql"
         minSdk 24
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -49,40 +47,24 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':rick_and_morty:presenter')
     implementation project(path: ':common:common_utills')
+    implementation project(path: ':rick_and_morty:domen')
 
-   // implementation 'androidx.core:core-ktx:1.8.0'
     implementation Deps.core
-    //implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     implementation LifeCycle.runtime
-    //implementation 'androidx.activity:activity-compose:1.5.1'
     implementation ComposeDeps.activity
-   // implementation platform('androidx.compose:compose-bom:2022.10.00')
     implementation platform(ComposeDeps.compose_boom)
-    //implementation 'androidx.compose.ui:ui'
-    implementation ComposeDeps.ui_
-   // implementation 'androidx.compose.ui:ui-graphics'
+    implementation ComposeDeps.ui
     implementation ComposeDeps.ui_graphics_
-    //implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation ComposeDeps.ui_tooling
-    //implementation 'androidx.compose.material3:material3'
-    implementation ComposeDeps.compose_material_3_
-    //testImplementation 'junit:junit:4.13.2'
+    implementation ComposeDeps.compose_material
     testImplementation Tests.j_unit
-    //androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation AndroidTest.j_unit
-
-    //androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation AndroidTest.espresso
-   // androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
     androidTestImplementation platform(ComposeDeps.compose_boom)
-    //androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
-    androidTestImplementation AndroidTest.compose_j_unit_
-    //debugImplementation 'androidx.compose.ui:ui-tooling'
-    debugImplementation ComposeDeps.compose_tooling_
-    //debugImplementation 'androidx.compose.ui:ui-test-manifest'
-    debugImplementation ComposeDeps.compose_manifest_
+    androidTestImplementation AndroidTest.compose_j_unit
+    debugImplementation ComposeDeps.compose_tooling
+    debugImplementation ComposeDeps.compose_manifest
 
     //Timber
     implementation Deps.timber
@@ -92,5 +74,5 @@ dependencies {
     //Coroutines
     implementation Coroutine.core
     implementation Coroutine.android
-
 }
+

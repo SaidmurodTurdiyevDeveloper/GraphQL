@@ -14,3 +14,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Rick And Morty GraphQL"
 include ':app'
+include ':rick_and_morty:domen'
+include ':rick_and_morty:presenter'
+include ':common:common_utills'
+include ':rick_and_morty:rick_and_mort_data'
