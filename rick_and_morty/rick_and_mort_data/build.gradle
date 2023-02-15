@@ -10,13 +10,15 @@ plugins {
 android {
     namespace = "com.rick_and_morty.rick_and_mort_data"
     compileSdk 33
-
+    def localPropertiesFile = rootProject.file("local.properties")
+    def localProperties = new Properties()
+    localProperties.load(new FileInputStream(localPropertiesFile))
     defaultConfig {
         minSdk 24
         targetSdk 33
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        buildConfigField("String", "BASE_URL", "\"" + localProperties['BASE_URL'] + "\"")
     }
 
     buildTypes {

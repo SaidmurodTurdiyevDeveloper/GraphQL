@@ -22,10 +22,15 @@ object Versions {
 
     //compose
     const val compose_ui = "1.3.3"
+    const val compose_ui_util = "1.4.0-beta01"
     const val compose_boom = "2022.10.00"
     const val compose_activity = "1.6.1"
     const val compose_material_3 = "1.1.0-alpha03"
     const val compose_material= "1.3.1"
+    const val compose_view_model= "2.6.0-alpha04"
+    const val compose_navigation= "2.6.0-alpha04"
+    const val compose_hilt_navigation= "1.1.0-alpha01"
+    const val compose_material_icon= "1.3.1"
 
     //navigation
     const val navigation = "2.5.3"
@@ -33,6 +38,7 @@ object Versions {
     //imageLoader
     const val glide = "4.14.2"
     const val picasso = "2.8"
+    const val coil = "2.2.2"
 
     //coroutine
     const val coroutine = "1.6.4"
@@ -68,9 +74,6 @@ object Versions {
 
     //Expansion panel
     const val expansion_panel = "1.2.4"
-
-    //Coil
-    const val coil = "2.2.2"
 
     //WorkManager
     const val work_manager = "2.7.1"
@@ -126,9 +129,11 @@ object Versions {
 
     //Swipe
     const val swipe_refresh_layout = "1.1.0"
+
+    //Pager
+    const val pager="0.19.0"
 }
 
-//androidx.core:core-ktx:1.9.0
 object Deps {
     //implementation
     const val core = "androidx.core:core-ktx:${Versions.core}"
@@ -163,6 +168,7 @@ object ComposeDeps {
     //implementation
     const val activity = "androidx.activity:activity-compose:${Versions.compose_activity}"
     const val ui = "androidx.compose.ui:ui:${Versions.compose_ui}"
+    const val ui_utils = "androidx.compose.ui:ui-util:${Versions.compose_ui_util}"
     const val ui_tooling = "androidx.compose.ui:ui-tooling-preview:${Versions.compose_ui}"
     const val compose_material_3 = "androidx.compose.material3:material3:${Versions.compose_material_3}"
     const val ui_ = "androidx.compose.ui:ui"
@@ -170,6 +176,10 @@ object ComposeDeps {
     const val ui_tooling_ = "androidx.compose.ui:ui-tooling-preview"
     const val compose_material_3_ = "androidx.compose.material3:material3"
     const val compose_material = "androidx.compose.material:material:${Versions.compose_material}"
+    const val compose_view_model="androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.compose_view_model}"
+    const val compose_navigation="androidx.navigation:navigation-compose:${Versions.compose_navigation}"
+    const val compose_material_icon="androidx.compose.material:material-icons-extended:${Versions.compose_material_icon}"
+    const val compose_hilt_navigation="androidx.hilt:hilt-navigation-compose:${Versions.compose_hilt_navigation}"
     //debugImplementation
     const val compose_tooling = "androidx.compose.ui:ui-tooling:${Versions.compose_ui}"
     const val compose_tooling_ = "androidx.compose.ui:ui-tooling"
@@ -201,11 +211,14 @@ object ImageLoader {
     const val glide_integration = "com.github.bumptech.glide:okhttp3-integration:${Versions.glide}"
     const val glide_compiler = "com.github.bumptech.glide:compiler:${Versions.glide}"
     const val picasso = "com.squareup.picasso:picasso:${Versions.picasso}"
+    const val coil = "io.coil-kt:coil:${Versions.coil}"
+    const val coil_compose = "io.coil-kt:coil-compose:${Versions.coil}"
 }
 
 object Coroutine {
     const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutine}"
     const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutine}"
+    const val service = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:${Versions.coroutine}"
 }
 
 object ViewBinding {
@@ -265,10 +278,6 @@ object Image {
 object Expansion {
     //implementation
     const val expansion_panel = "com.github.florent37:expansionpanel:${Versions.expansion_panel}"
-}
-
-object Coil {
-    const val coil = "io.coil-kt:coil-compose:${Versions.coil}"
 }
 
 object WorkManager {
@@ -345,4 +354,10 @@ object MaskEdittext {
 
 object Swipe {
     const val swipe_refresh_layout = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swipe_refresh_layout}"
+}
+
+object Pager{
+    //implementation
+    const val pager="com.google.accompanist:accompanist-pager:${Versions.pager}"
+    const val pager_indicator="com.google.accompanist:accompanist-pager-indicators:${Versions.pager}"
 }

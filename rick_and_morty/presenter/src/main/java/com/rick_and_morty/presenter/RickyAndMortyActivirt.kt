@@ -1,5 +1,7 @@
 package com.rick_and_morty.presenter
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,31 +12,30 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.rick_and_morty.common_utills.navigator.Navigator
 import com.rick_and_morty.presenter.ui.theme.RickAndMortyGraphQLTheme
 
-class HomeScreen : ComponentActivity() {
+class RickyAndMortyActivity : ComponentActivity() {
+    companion object {
+        fun launchActivity(activity: Activity) {
+            val intent = Intent(activity, RickyAndMortyActivity::class.java)
+            activity.startActivity(intent)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             RickAndMortyGraphQLTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+
                 }
             }
         }
     }
 }
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    RickAndMortyGraphQLTheme {
-        Greeting("Android")
+object GoToRickyAndMortyActivity : Navigator {
+    override fun navigate(activity: Activity) {
+        RickyAndMortyActivity.launchActivity(activity)
     }
 }
