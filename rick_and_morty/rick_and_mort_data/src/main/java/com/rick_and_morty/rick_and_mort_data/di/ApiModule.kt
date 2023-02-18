@@ -21,7 +21,7 @@ object ApiModule {
     @Singleton
     fun provideApolloApi(): ApolloApi = ApolloApi()
 
-    @Provides
-    @Singleton
-    fun provideApolloAClient(api: ApolloApi): ApolloClient = api.getApolloClient()
+//    @Provides
+//    @Singleton
+//    fun provideApolloAClient(api: ApolloApi): ApolloClient = api.getApolloClient()
 }

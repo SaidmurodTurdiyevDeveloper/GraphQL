@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.rick_and_morty.rickandmortygraphql"
-        minSdk 24
+        minSdk 21
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -39,7 +39,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.3.2'
+        kotlinCompilerExtensionVersion '1.4.2'
     }
     packagingOptions {
         resources {
