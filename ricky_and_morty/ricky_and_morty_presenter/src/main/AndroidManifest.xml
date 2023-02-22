@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <activity
+            android:name=".RickyAndMortyActivity"
+            android:exported="false"
+            android:label="@string/title_activity_ricky_and_morty"
+            android:theme="@style/Theme.RickyAndMorty" />
+    </application>
+
+</manifest>

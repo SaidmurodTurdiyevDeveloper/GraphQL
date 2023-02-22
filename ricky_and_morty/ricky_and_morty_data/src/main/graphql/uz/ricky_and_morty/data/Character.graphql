@@ -1,0 +1,91 @@
+query CharacterList($page: Int!){
+    characters(page: $page){
+        info {
+            count
+            pages
+            next
+            prev
+        }
+        results {
+            id
+            image
+            name
+            status
+            created
+        }
+    }
+}
+query CharacterListWithFilter($filter :FilterCharacter!,$page: Int!){
+    characters(filter: $filter,page: $page){
+        info {
+            count
+            pages
+            next
+            prev
+        }
+        results {
+            id
+            image
+            name
+            status
+            created
+        }
+    }
+}
+
+query Character($id: ID!){
+    character(id: $id){
+        image
+        name
+        status
+        created
+        episode {
+            id
+            name
+            episode
+            created
+            air_date
+        }
+        gender
+        location {
+            id
+            name
+            type
+        }
+        origin {
+            id
+            name
+            type
+        }
+        species
+        type
+    }
+}
+query CharactersWithIds($ids:[ID!]!){
+    charactersByIds(ids:$ids){
+        image
+        name
+        status
+        created,
+        episode {
+            id
+            name
+            episode
+        }
+        gender
+        location {
+            id
+            name
+            type
+        }
+        origin {
+            id
+            name
+            type
+        }
+        species
+        type
+    }
+}
+
+

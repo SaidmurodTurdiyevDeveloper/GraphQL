@@ -1,0 +1,20 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "Ricky And Morty"
+include ':app'
+include ':common:common_utills'
+include ':ricky_and_morty:ricky_and_morty_domen'
+include ':ricky_and_morty:ricky_and_morty_presenter'
+include ':ricky_and_morty:ricky_and_morty_data'

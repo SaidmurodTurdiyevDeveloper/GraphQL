@@ -1,0 +1,83 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
+}
+
+android {
+    namespace 'uz.graphql.rickyandmorty'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "uz.graphql.rickyandmorty"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.2.0'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+    implementation project(path: ':common:common_utills')
+    implementation project(path: ':ricky_and_morty:ricky_and_morty_presenter')
+
+    implementation CommonAndroidDependencies.core
+    implementation CommonAndroidDependencies.lifecycle
+    implementation ComposeDependencies.activity
+    implementation ComposeDependencies.ui
+    implementation ComposeDependencies.ui_util
+    implementation ComposeDependencies.ui_tooling
+    implementation ComposeDependencies.material
+    testImplementation AndroidTestDependencies.j_unit
+    androidTestImplementation AndroidTestDependencies.androidx_j_unit
+    androidTestImplementation AndroidTestDependencies.espresso
+    androidTestImplementation AndroidTestDependencies.compose_j_unit
+    debugImplementation AndroidTestDependencies.compose_tooling
+    debugImplementation AndroidTestDependencies.compose_manifest
+
+    implementation ComposeDependencies.navigation
+
+    implementation DaggerHilt.android
+    kapt DaggerHilt.compiler
+    implementation DaggerHilt.navigation_compose
+
+    implementation Accompanist.pager
+    implementation Accompanist.pager_indicator
+    implementation Accompanist.system_ui_controller
+
+    implementation ImageLoader.coil_compose
+}
+kapt {
+    correctErrorTypes true
+}

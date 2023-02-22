@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Rick And Morty GraphQL</string>
+    //months
+    <string name="January">Yanvar</string>
+    <string name="February">Fevral</string>
+    <string name="March">Mart</string>
+    <string name="April">Aprel</string>
+    <string name="May">May</string>
+    <string name="June">Iyun</string>
+    <string name="July">Iyul</string>
+    <string name="August">Avgust</string>
+    <string name="September">Sentabr</string>
+    <string name="October">Oktabr</string>
+    <string name="November">Noyabr</string>
+    <string name="December">Dekabr</string>
+    <string name="WrongMonth">Nothing</string>
+
+    //numbers
+    <string name="text_one">1</string>
+    <string name="text_two">2</string>
+    <string name="text_three">3</string>
+    <string name="text_four">4</string>
+    <string name="text_five">5</string>
+    <string name="text_six">6</string>
+    <string name="text_seven">7</string>
+    <string name="text_eight">8</string>
+    <string name="text_nine">9</string>
+    <string name="text_zero">0</string>
+    //language
+    <string name="text_uzbek">O`zbek</string>
+    <string name="text_english">English</string>
+    <string name="text_russion">Русский</string>
+
+    <string name="text_empty"> </string>
+    <string name="image_description">Image Description</string>
+</resources>

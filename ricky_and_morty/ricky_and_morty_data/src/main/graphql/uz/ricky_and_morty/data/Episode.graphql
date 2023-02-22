@@ -1,0 +1,63 @@
+query EpisodeList($page: Int!){
+    episodes(page: $page){
+        info {
+            count
+            pages
+            next
+            prev
+        }
+        results {
+            id
+            name
+            episode
+            created
+        }
+    }
+}
+query EpisodeListWithFilter($filter :FilterEpisode!,$page: Int!){
+    episodes(filter: $filter,page: $page){
+        info {
+            count
+            pages
+            next
+            prev
+        }
+        results {
+            id
+            name
+            episode
+            created
+        }
+    }
+}
+
+query Episode($id: ID!){
+    episode(id: $id){
+        episode
+        name
+        air_date
+        created
+        characters {
+            id
+            name
+            image
+            created
+            type
+            status
+        }
+    }
+}
+query EpisodesWithIds($ids:[ID!]!){
+    episodesByIds(ids:$ids){
+        episode
+        name
+        air_date
+        created
+        characters {
+            id
+            name
+        }
+    }
+}
+
+
