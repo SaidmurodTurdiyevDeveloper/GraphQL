@@ -18,11 +18,20 @@ import java.io.IOException
 class RepositoryCharacterImpl(private var client: ApolloClient) : RepositoryCharacter {
     override suspend fun getCharacters(page: Int): ResponseApi<CharacterListQuery.Characters> {
         return try {
-            val result = client.query(CharacterListQuery(page)).execute()
-            val characters = result.data?.characters
-            if (characters != null)
-                ResponseApi.Success(characters)
-            else ResponseApi.Error("Characters can not find")
+            if (page < 0) {
+                ResponseApi.Success(
+                    CharacterListQuery.Characters(
+                        info = null,
+                        results = null
+                    )
+                )
+            } else {
+                val result = client.query(CharacterListQuery(page)).execute()
+                val characters = result.data?.characters
+                if (characters != null)
+                    ResponseApi.Success(characters)
+                else ResponseApi.Error("Characters can not find")
+            }
         } catch (e: IOException) {
             ResponseApi.Error(e.message ?: "Unknown error")
         } catch (e: Exception) {
@@ -48,11 +57,20 @@ class RepositoryCharacterImpl(private var client: ApolloClient) : RepositoryChar
             filter = filter.copy(type = Optional.present(filterData.type))
         }
         return try {
-            val result = client.query(CharacterListWithFilterQuery(filter, page)).execute()
-            val characters = result.data?.characters
-            if (characters != null)
-                ResponseApi.Success(characters)
-            else ResponseApi.Error("Characters can not find")
+            if (page < 0) {
+                ResponseApi.Success(
+                    CharacterListWithFilterQuery.Characters(
+                        info = null,
+                        results = null
+                    )
+                )
+            } else {
+                val result = client.query(CharacterListWithFilterQuery(filter, page)).execute()
+                val characters = result.data?.characters
+                if (characters != null)
+                    ResponseApi.Success(characters)
+                else ResponseApi.Error("Characters can not find")
+            }
         } catch (e: IOException) {
             ResponseApi.Error(e.message ?: "Unknown error")
         } catch (e: Exception) {

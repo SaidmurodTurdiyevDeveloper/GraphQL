@@ -3,7 +3,7 @@
 
     <application>
         <activity
-            android:name=".RickyAndMortyActivity"
+            android:name=".ActivityRickyAndMorty"
             android:exported="false"
             android:label="@string/title_activity_ricky_and_morty"
             android:theme="@style/Theme.RickyAndMorty" />

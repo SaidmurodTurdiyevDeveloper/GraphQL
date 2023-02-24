@@ -11,7 +11,11 @@ import uz.graphql.ricky_and_morty_data.repository.RepositoryLocation
  * Created by Saidmurod Turdiyev (S.M.T) on 2/18/2023 11:28 AM for Rick And Morty GraphQL.
  */
 class GetLocationsList(private val repositoryCharacter: RepositoryLocation) {
-    operator fun invoke(page: Int): Flow<ResponseData<List<LocationsListData>>> = invokeUseCase(page, repositoryCharacter::getLocations) { locations ->
-        locations.toLocationsList()
+    private var currentPage = 0
+    private var list = ArrayList<LocationsListData>()
+    operator fun invoke(): Flow<ResponseData<List<LocationsListData>>> = invokeUseCase(currentPage, repositoryCharacter::getLocations) { locations ->
+        list.addAll(locations.toLocationsList())
+        currentPage = locations.info?.next?:-1
+        list
     }
 }

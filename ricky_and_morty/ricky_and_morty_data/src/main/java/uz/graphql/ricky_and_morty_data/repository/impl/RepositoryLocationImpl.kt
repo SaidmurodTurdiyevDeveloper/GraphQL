@@ -2,10 +2,7 @@ package uz.graphql.ricky_and_morty_data.repository.impl
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
-import uz.graphql.LocationListQuery
-import uz.graphql.LocationListWithFilterQuery
-import uz.graphql.LocationQuery
-import uz.graphql.LocationsWithIdsQuery
+import uz.graphql.*
 import uz.graphql.common_utills.other.ResponseApi
 import uz.graphql.ricky_and_morty_data.model.FilterLocationDTO
 import uz.graphql.ricky_and_morty_data.repository.RepositoryLocation
@@ -18,11 +15,20 @@ import java.io.IOException
 class RepositoryLocationImpl(private var client: ApolloClient) : RepositoryLocation {
     override suspend fun getLocations(page: Int): ResponseApi<LocationListQuery.Locations> {
         return try {
-            val result = client.query(LocationListQuery(page)).execute()
-            val episodes = result.data?.locations
-            if (episodes != null)
-                ResponseApi.Success(episodes)
-            else ResponseApi.Error("Locations can not find")
+            if (page < 0) {
+                ResponseApi.Success(
+                    LocationListQuery.Locations(
+                        info = null,
+                        results = null
+                    )
+                )
+            } else {
+                val result = client.query(LocationListQuery(page)).execute()
+                val episodes = result.data?.locations
+                if (episodes != null)
+                    ResponseApi.Success(episodes)
+                else ResponseApi.Error("Locations can not find")
+            }
         } catch (e: IOException) {
             ResponseApi.Error(e.message ?: "Unknown error")
         } catch (e: Exception) {
@@ -42,11 +48,20 @@ class RepositoryLocationImpl(private var client: ApolloClient) : RepositoryLocat
             filter = filter.copy(type = Optional.present(filterData.type))
         }
         return try {
-            val result = client.query(LocationListWithFilterQuery(filter, page)).execute()
-            val episodes = result.data?.locations
-            if (episodes != null)
-                ResponseApi.Success(episodes)
-            else ResponseApi.Error("Locations can not find")
+            if (page < 0) {
+                ResponseApi.Success(
+                    LocationListWithFilterQuery.Locations(
+                        info = null,
+                        results = null
+                    )
+                )
+            } else {
+                val result = client.query(LocationListWithFilterQuery(filter, page)).execute()
+                val episodes = result.data?.locations
+                if (episodes != null)
+                    ResponseApi.Success(episodes)
+                else ResponseApi.Error("Locations can not find")
+            }
         } catch (e: IOException) {
             ResponseApi.Error(e.message ?: "Unknown error")
         } catch (e: Exception) {

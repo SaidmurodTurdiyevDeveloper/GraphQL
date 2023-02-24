@@ -13,8 +13,9 @@ import uz.graphql.ricky_and_morty_data.repository.RepositoryCharacter
  * Created by Saidmurod Turdiyev (S.M.T) on 2/18/2023 11:28 AM for Rick And Morty GraphQL.
  */
 class GetCharactersListWithFilter(private val repositoryCharacter: RepositoryCharacter) {
+    private var currentPage = 0
+    private var list = ArrayList<CharactersListData>()
     operator fun invoke(
-        page: Int,
         gender: String? = null,
         name: String? = null,
         species: String? = null,
@@ -22,7 +23,7 @@ class GetCharactersListWithFilter(private val repositoryCharacter: RepositoryCha
         type: String? = null
     ): Flow<ResponseData<List<CharactersListData>>> =
         invokeUseCase(
-            page, FilterCharacterDTO(
+            currentPage, FilterCharacterDTO(
                 gender = gender,
                 name = name,
                 species = species,
@@ -31,6 +32,8 @@ class GetCharactersListWithFilter(private val repositoryCharacter: RepositoryCha
             ),
             repositoryCharacter::getCharactersWithFilter
         ) { characterList ->
-            characterList.toCharactersList()
+            list.addAll(characterList.toCharactersList())
+            currentPage = characterList.info?.next ?: -1
+            list
         }
 }

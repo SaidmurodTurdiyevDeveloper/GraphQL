@@ -13,20 +13,23 @@ import uz.graphql.ricky_and_morty_data.repository.RepositoryLocation
  * Created by Saidmurod Turdiyev (S.M.T) on 2/18/2023 11:28 AM for Rick And Morty GraphQL.
  */
 class GetLocationsListWithFilter(private val repositoryCharacter: RepositoryLocation) {
+    private var currentPage = 0
+    private var list = ArrayList<LocationsListData>()
     operator fun invoke(
-        page: Int,
         dimension: String? = null,
         name: String? = null,
         type: String? = null
     ): Flow<ResponseData<List<LocationsListData>>> =
         invokeUseCase(
-            page, FilterLocationDTO(
+            currentPage, FilterLocationDTO(
                 dimension  = dimension,
                 name = name,
                 type = type
             ),
             repositoryCharacter::getLocationsWithFilter
         ) { locations ->
-            locations.toLocationsList()
+            list.addAll(locations.toLocationsList())
+            currentPage = locations.info?.next?:-1
+            list
         }
 }

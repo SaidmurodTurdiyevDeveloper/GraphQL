@@ -7,7 +7,11 @@ import kotlinx.coroutines.flow.flow
  * Created by Saidmurod Turdiyev (S.M.T) on 2/18/2023 1:22 PM for Rick And Morty GraphQL.
  */
 
-fun <T, K, S> invokeUseCase(requireData: S, resultBlock: suspend (S) -> ResponseApi<K>, successBlock: (K) -> T): Flow<ResponseData<T>> = flow {
+fun <T, K, S> invokeUseCase(
+    requireData: S,
+    resultBlock: suspend (S) -> ResponseApi<K>,
+    successBlock: (K) -> T
+): Flow<ResponseData<T>> = flow {
     emit(ResponseData.Loading(true))
     when (val result = resultBlock(requireData)) {
         is ResponseApi.Success -> {
@@ -21,7 +25,10 @@ fun <T, K, S> invokeUseCase(requireData: S, resultBlock: suspend (S) -> Response
     }
 }
 
-fun <T, K> invokeUseCase(resultBlock: suspend () -> ResponseApi<K>, successBlock: (K) -> T): Flow<ResponseData<T>> = flow {
+fun <T, K> invokeUseCase(
+    resultBlock: suspend () -> ResponseApi<K>,
+    successBlock: (K) -> T
+): Flow<ResponseData<T>> = flow {
     emit(ResponseData.Loading(true))
     when (val result = resultBlock()) {
         is ResponseApi.Success -> {
