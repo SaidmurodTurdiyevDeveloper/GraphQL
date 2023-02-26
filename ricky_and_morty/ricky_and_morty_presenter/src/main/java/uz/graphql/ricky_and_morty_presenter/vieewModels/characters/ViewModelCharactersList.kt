@@ -38,29 +38,29 @@ class ViewModelCharactersList @Inject constructor(
     private var filterStatus: String? = null
     private var filterType: String? = null
 
-    private var selectedList = ArrayList<String>()
-
     private val _event = MutableSharedFlow<EventViewModelCharactersList>()
     val event get() = _event.asSharedFlow()
+
 
     init {
         loadWithNetworkNetwork(context, errorBlock = {
             _state.value = state.value.copy(error = Constants.ERROR_NETWORK)
         }) {
-            getCharacters()
+            getCharacters(0)
         }
     }
 
-    private suspend fun getCharacters() {
+    private suspend fun getCharacters(page: Int? = null) {
         if (filterGender.isNullOrBlank()
             && filterName.isNullOrBlank()
             && filterSpecies.isNullOrBlank()
             && filterStatus.isNullOrBlank()
             && filterType.isNullOrBlank()
         ) {
-            useCase.getCharactersList()
+            useCase.getCharactersList(page = page)
         } else {
             useCase.getCharactersListWithFilter(
+                page = page,
                 gender = filterGender,
                 name = filterName,
                 species = filterSpecies,
@@ -70,13 +70,21 @@ class ViewModelCharactersList @Inject constructor(
         }.collectLatest { response ->
             when (response) {
                 is ResponseData.Error -> {
-                    _state.value = state.value.copy(error = response.message)
+                    if (state.value.characters.isEmpty()) {
+                        _state.value = state.value.copy(error = response.message)
+                    } else {
+                        _event.emit(EventViewModelCharactersList.ShowSnackBar(response.message))
+                    }
                 }
                 is ResponseData.Loading -> {
-                    _state.value = state.value.copy(isLoading = response.isLoading)
+                    if (state.value.characters.isEmpty()) {
+                        _state.value = state.value.copy(isLoading = response.isLoading)
+                    } else {
+                        _state.value = state.value.copy(isLoadingItem = response.isLoading)
+                    }
                 }
                 is ResponseData.Success -> {
-                    _state.value = state.value.copy(characters = state.value.characters, error = null)
+                    _state.value = state.value.copy(characters = ArrayList(response.data), error = null, selectCount = 0)
                 }
             }
         }
@@ -86,25 +94,37 @@ class ViewModelCharactersList @Inject constructor(
     fun onEvent(eventUi: EventUICharactersList) {
         when (eventUi) {
             is EventUICharactersList.Filter -> {
-                filterGender = eventUi.gender
-                filterName = eventUi.name
-                filterSpecies = eventUi.species
-                filterStatus = eventUi.status
-                filterType = eventUi.type
                 viewModelScope.launch {
-                    getCharacters()
+                    filterGender = eventUi.gender
+                    filterName = eventUi.name
+                    filterSpecies = eventUi.species
+                    filterStatus = eventUi.status
+                    filterType = eventUi.type
+                    getCharacters(0)
                 }
             }
             is EventUICharactersList.OpenCharacterDetailsScreen -> {
                 viewModelScope.launch {
-                    _event.emit(EventViewModelCharactersList.OpenCharacterDetailsScreen(eventUi.id))
+                    if (eventUi.id.trim().isBlank()) {
+                        _event.emit(EventViewModelCharactersList.ShowToast("You selected item id cannot find please try again"))
+                    } else
+                        _event.emit(EventViewModelCharactersList.OpenCharacterDetailsScreen(eventUi.id))
                 }
             }
             is EventUICharactersList.SelectItem -> {
-                if (isSelected(eventUi.id))
-                    selectedList.remove(eventUi.id)
-                else
-                    selectedList.add(eventUi.id)
+                val selectCount = state.value.selectCount
+                val newList = state.value.characters.toMutableList().map {
+                    if (it.id == eventUi.character.id)
+                        it.copy(select = eventUi.character.select.not())
+                    else
+                        it
+                }
+                _state.value = state.value.copy(
+                    characters = newList,
+                    selectCount = if (eventUi.character.select)
+                        selectCount - 1
+                    else selectCount + 1
+                )
             }
             EventUICharactersList.LoadList -> {
                 filterGender = null
@@ -113,7 +133,7 @@ class ViewModelCharactersList @Inject constructor(
                 filterStatus = null
                 filterType = null
                 viewModelScope.launch {
-                    getCharacters()
+                    getCharacters(0)
                 }
             }
 
@@ -123,32 +143,45 @@ class ViewModelCharactersList @Inject constructor(
                 }
             }
             EventUICharactersList.ClearSelectedItem -> {
-                selectedList.clear()
-                _state.value = state.value.copy()
+                val newList = state.value.characters.toMutableList().map {
+                    it.copy(select = false)
+                }
+                _state.value = _state.value.copy(characters = newList, selectCount = 0)
             }
-            EventUICharactersList.OpenCharactersListWithDetailsScreen -> {
+            is EventUICharactersList.OpenCharactersListWithDetailsScreen -> {
                 viewModelScope.launch {
-                    val idList = Gson().toJson(selectedList)
-                    _event.emit(EventViewModelCharactersList.OpenCharactersListWithDetailsScreen(idList))
+                    val list = ArrayList<String>()
+                    state.value.characters.forEach {
+                        if (it.select) {
+                            list.add(it.id)
+                            it.select = false
+                        }
+                    }
+                    if (list.isEmpty())
+                        _event.emit(EventViewModelCharactersList.ShowToast("You have not any selected data"))
+                    else {
+                        val idList = Gson().toJson(list)
+                        _event.emit(EventViewModelCharactersList.OpenCharactersListWithDetailsScreen(idList))
+                    }
+                    _state.value = _state.value.copy(selectCount = 0)
+
                 }
             }
         }
     }
 
-    fun isSelected(id: String): Boolean {
-        if (selectedList.isEmpty())
-            return false
-        return selectedList.contains(id)
-    }
 
     data class StateScreenOfViewModelCharactersList(
         val isLoading: Boolean = false,
+        val isLoadingItem: Boolean = false,
         val error: String? = null,
-        val characters: List<CharactersListData> = emptyList()
+        val characters: List<CharactersListData> = ArrayList(),
+        val selectCount: Int = 0
     )
 
     sealed class EventUICharactersList {
         data class OpenCharacterDetailsScreen(val id: String) : EventUICharactersList()
+
         data class Filter(
             val gender: String? = null,
             val name: String? = null,
@@ -157,8 +190,7 @@ class ViewModelCharactersList @Inject constructor(
             val type: String? = null
         ) : EventUICharactersList()
 
-        data class SelectItem(val id: String) : EventUICharactersList()
-
+        data class SelectItem(val character: CharactersListData) : EventUICharactersList()
         object OpenCharactersListWithDetailsScreen : EventUICharactersList()
         object ClearSelectedItem : EventUICharactersList()
         object LoadList : EventUICharactersList()

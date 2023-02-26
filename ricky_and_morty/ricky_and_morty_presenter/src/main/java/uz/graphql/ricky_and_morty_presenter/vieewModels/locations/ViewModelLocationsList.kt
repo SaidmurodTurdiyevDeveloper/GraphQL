@@ -49,15 +49,16 @@ class ViewModelLocationsList @Inject constructor(
         }
     }
 
-    private suspend fun getLocations() {
+    private suspend fun getLocations(page:Int?=null) {
         viewModelScope.launch {
             if (filterName.isNullOrBlank() &&
                 filterDimension.isNullOrBlank() &&
                 filterType.isNullOrBlank()
             ) {
-                useCase.getLocationsList()
+                useCase.getLocationsList(page=page)
             } else {
                 useCase.getLocationsListWithFilter(
+                    page=page,
                     dimension = filterDimension,
                     name = filterName,
                     type = filterType

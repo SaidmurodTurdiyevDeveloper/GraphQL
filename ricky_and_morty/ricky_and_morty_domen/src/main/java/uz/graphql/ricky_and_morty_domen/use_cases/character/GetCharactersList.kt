@@ -13,9 +13,12 @@ import uz.graphql.ricky_and_morty_data.repository.RepositoryCharacter
 class GetCharactersList(private val repositoryCharacter: RepositoryCharacter) {
     private var currentPage = 0
     private var list = ArrayList<CharactersListData>()
-    operator fun invoke(): Flow<ResponseData<List<CharactersListData>>> = invokeUseCase(currentPage, repositoryCharacter::getCharacters) { characterList ->
-        list.addAll(characterList.toCharactersList())
-        currentPage = characterList.info?.next?:-1
+    operator fun invoke(page: Int? = null): Flow<ResponseData<List<CharactersListData>>> = invokeUseCase(page ?: currentPage, repositoryCharacter::getCharacters) { characterList ->
+        val newList = characterList.toCharactersList()
+        if (page == 0)
+            list.clear()
+        list.addAll(newList)
+        currentPage = characterList.info?.next ?: -1
         list
     }
 }

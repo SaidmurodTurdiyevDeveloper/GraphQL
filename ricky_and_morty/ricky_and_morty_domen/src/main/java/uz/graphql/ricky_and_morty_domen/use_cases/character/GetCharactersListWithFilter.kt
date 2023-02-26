@@ -16,6 +16,7 @@ class GetCharactersListWithFilter(private val repositoryCharacter: RepositoryCha
     private var currentPage = 0
     private var list = ArrayList<CharactersListData>()
     operator fun invoke(
+        page:Int?=null,
         gender: String? = null,
         name: String? = null,
         species: String? = null,
@@ -23,7 +24,7 @@ class GetCharactersListWithFilter(private val repositoryCharacter: RepositoryCha
         type: String? = null
     ): Flow<ResponseData<List<CharactersListData>>> =
         invokeUseCase(
-            currentPage, FilterCharacterDTO(
+            page?:currentPage, FilterCharacterDTO(
                 gender = gender,
                 name = name,
                 species = species,
@@ -32,7 +33,10 @@ class GetCharactersListWithFilter(private val repositoryCharacter: RepositoryCha
             ),
             repositoryCharacter::getCharactersWithFilter
         ) { characterList ->
-            list.addAll(characterList.toCharactersList())
+            val newList = characterList.toCharactersList()
+            if (page == 0)
+                list.clear()
+            list.addAll(newList)
             currentPage = characterList.info?.next ?: -1
             list
         }

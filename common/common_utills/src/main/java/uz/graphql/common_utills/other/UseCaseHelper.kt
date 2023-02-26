@@ -10,17 +10,17 @@ import kotlinx.coroutines.flow.flow
 fun <T, K, S> invokeUseCase(
     requireData: S,
     resultBlock: suspend (S) -> ResponseApi<K>,
-    successBlock: (K) -> T
+    successBlock:  (K) -> T
 ): Flow<ResponseData<T>> = flow {
     emit(ResponseData.Loading(true))
     when (val result = resultBlock(requireData)) {
         is ResponseApi.Success -> {
-            emit(ResponseData.Success(successBlock(result.data)))
             emit(ResponseData.Loading(false))
+            emit(ResponseData.Success(successBlock.invoke(result.data)))
         }
         is ResponseApi.Error -> {
-            emit(ResponseData.Error(result.message))
             emit(ResponseData.Loading(false))
+            emit(ResponseData.Error(result.message))
         }
     }
 }
@@ -32,12 +32,12 @@ fun <T, K> invokeUseCase(
     emit(ResponseData.Loading(true))
     when (val result = resultBlock()) {
         is ResponseApi.Success -> {
-            emit(ResponseData.Success(successBlock(result.data)))
             emit(ResponseData.Loading(false))
+            emit(ResponseData.Success(successBlock.invoke(result.data)))
         }
         is ResponseApi.Error -> {
-            emit(ResponseData.Error(result.message))
             emit(ResponseData.Loading(false))
+            emit(ResponseData.Error(result.message))
         }
     }
 }
@@ -46,12 +46,12 @@ fun <T, K, S, H> invokeUseCase(requireFirstData: S, requireSecondData: H, result
     emit(ResponseData.Loading(true))
     when (val result = resultBlock(requireFirstData, requireSecondData)) {
         is ResponseApi.Success -> {
-            emit(ResponseData.Success(successBlock(result.data)))
             emit(ResponseData.Loading(false))
+            emit(ResponseData.Success(successBlock.invoke(result.data)))
         }
         is ResponseApi.Error -> {
-            emit(ResponseData.Error(result.message))
             emit(ResponseData.Loading(false))
+            emit(ResponseData.Error(result.message))
         }
     }
 }
@@ -61,12 +61,12 @@ fun <T, K, S, H, M> invokeUseCase(requireFirstData: S, requireSecondData: H, req
         emit(ResponseData.Loading(true))
         when (val result = resultBlock(requireFirstData, requireSecondData, requireThirdData)) {
             is ResponseApi.Success -> {
-                emit(ResponseData.Success(successBlock(result.data)))
                 emit(ResponseData.Loading(false))
+                emit(ResponseData.Success(successBlock.invoke(result.data)))
             }
             is ResponseApi.Error -> {
-                emit(ResponseData.Error(result.message))
                 emit(ResponseData.Loading(false))
+                emit(ResponseData.Error(result.message))
             }
         }
     }

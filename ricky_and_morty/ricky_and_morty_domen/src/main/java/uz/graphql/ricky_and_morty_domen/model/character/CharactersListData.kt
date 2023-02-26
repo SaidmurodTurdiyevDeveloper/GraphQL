@@ -12,7 +12,11 @@ data class CharactersListData(
     val image: String,
     val name: String,
     val status: String,
-    val created: String
+    val created: String,
+    val species: String,
+    val type: String,
+    val gender: String,
+    var select: Boolean = false
 )
 
 fun CharacterListQuery.Characters.toCharactersList(): List<CharactersListData> {
@@ -23,10 +27,14 @@ fun CharacterListQuery.Characters.toCharactersList(): List<CharactersListData> {
             image = data?.image ?: "",
             name = data?.name ?: "",
             status = data?.status ?: "",
-            created = data?.created ?: ""
+            created = data?.created ?: "",
+            species = data?.species ?: "",
+            gender = data?.gender ?: "",
+            type = data?.type ?: ""
         )
     } ?: emptyList()
 }
+
 fun CharacterListWithFilterQuery.Characters.toCharactersList(): List<CharactersListData> {
     this.results
     return this.results?.map { data ->
@@ -35,7 +43,10 @@ fun CharacterListWithFilterQuery.Characters.toCharactersList(): List<CharactersL
             image = data?.image ?: "",
             name = data?.name ?: "",
             status = data?.status ?: "",
-            created = data?.created ?: ""
+            created = data?.created ?: "",
+            species = data?.species ?: "",
+            gender = data?.gender ?: "",
+            type = data?.type ?: ""
         )
     } ?: emptyList()
 }

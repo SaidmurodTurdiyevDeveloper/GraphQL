@@ -44,16 +44,19 @@ class ViewModelEpisodesList @Inject constructor(
         loadWithNetworkNetwork(context, errorBlock = {
             _state.value = state.value.copy(error = Constants.ERROR_NETWORK)
         }) {
-            getEpisodes()
+            getEpisodes(0)
         }
     }
 
-    private suspend fun getEpisodes() {
+    private suspend fun getEpisodes(page: Int? = null) {
         viewModelScope.launch {
             if (filterName.isNullOrBlank() && filterEpisode.isNullOrBlank()) {
-                useCase.getEpisodesList()
+                useCase.getEpisodesList(
+                    page = page
+                )
             } else {
                 useCase.getEpisodesListWithFilter(
+                    page = page,
                     name = filterName,
                     episode = filterEpisode,
                 )
@@ -79,14 +82,14 @@ class ViewModelEpisodesList @Inject constructor(
                 filterEpisode = eventUi.episode
                 filterName = eventUi.name
                 viewModelScope.launch {
-                    getEpisodes()
+                    getEpisodes(0)
                 }
             }
             EventUIEpisodesList.LoadList -> {
                 filterEpisode = null
                 filterName = null
                 viewModelScope.launch {
-                    getEpisodes()
+                    getEpisodes(0)
                 }
             }
             is EventUIEpisodesList.OpenEpisodeDetailsScreen -> {

@@ -13,8 +13,11 @@ import uz.graphql.ricky_and_morty_data.repository.RepositoryLocation
 class GetLocationsList(private val repositoryCharacter: RepositoryLocation) {
     private var currentPage = 0
     private var list = ArrayList<LocationsListData>()
-    operator fun invoke(): Flow<ResponseData<List<LocationsListData>>> = invokeUseCase(currentPage, repositoryCharacter::getLocations) { locations ->
-        list.addAll(locations.toLocationsList())
+    operator fun invoke(page: Int? = null): Flow<ResponseData<List<LocationsListData>>> = invokeUseCase(page?:currentPage, repositoryCharacter::getLocations) { locations ->
+        val newList = locations.toLocationsList()
+        if (page == 0)
+            list.clear()
+        list.addAll(newList)
         currentPage = locations.info?.next?:-1
         list
     }

@@ -16,19 +16,23 @@ class GetLocationsListWithFilter(private val repositoryCharacter: RepositoryLoca
     private var currentPage = 0
     private var list = ArrayList<LocationsListData>()
     operator fun invoke(
+        page: Int? = null,
         dimension: String? = null,
         name: String? = null,
         type: String? = null
     ): Flow<ResponseData<List<LocationsListData>>> =
         invokeUseCase(
-            currentPage, FilterLocationDTO(
+            page?:currentPage, FilterLocationDTO(
                 dimension  = dimension,
                 name = name,
                 type = type
             ),
             repositoryCharacter::getLocationsWithFilter
         ) { locations ->
-            list.addAll(locations.toLocationsList())
+            val newList = locations.toLocationsList()
+            if (page == 0)
+                list.clear()
+            list.addAll(newList)
             currentPage = locations.info?.next?:-1
             list
         }

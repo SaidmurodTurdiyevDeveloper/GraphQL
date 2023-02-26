@@ -16,18 +16,22 @@ class GetEpisodesListWithFilter(private val repositoryCharacter: RepositoryEpiso
     private var currentPage = 0
     private var list = ArrayList<EpisodesListData>()
     operator fun invoke(
+        page: Int? = null,
         name: String? = null,
         episode: String? = null,
     ): Flow<ResponseData<List<EpisodesListData>>> =
         invokeUseCase(
-            currentPage,
+            page?:currentPage,
             FilterEpisodeDTO(
                 name = name,
                 episode = episode
             ),
             repositoryCharacter::getEpisodesWithFilter
         ) { episodes ->
-            list.addAll(episodes.toEpisodesList())
+            val newList = episodes.toEpisodesList()
+            if (page == 0)
+                list.clear()
+            list.addAll(newList)
             currentPage = episodes.info?.next ?: -1
             list
         }

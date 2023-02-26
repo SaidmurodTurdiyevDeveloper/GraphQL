@@ -22,16 +22,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
+import com.rick_and_morty.common_utills.other.extention.showToast
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import uz.graphql.common_utills.activity.Activities
 import uz.graphql.rickyandmorty.preseenter.model.pagerList
 import uz.graphql.common_utills.navigator.Navigator
+import uz.graphql.rickyandmorty.preseenter.viewModel.ViewModelStarting
 import kotlin.math.absoluteValue
 
 /**
@@ -43,6 +48,7 @@ fun StartingScreen(
     navController: NavController,
     provider: Navigator.Provider,
     activity: Activity,
+    viewModel: ViewModelStarting = hiltViewModel()
 ) {
 
     val pagerState = rememberPagerState(
@@ -50,6 +56,22 @@ fun StartingScreen(
     )
     var movePage by remember {
         mutableStateOf(0)
+    }
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collectLatest { event ->
+            when (event) {
+                ViewModelStarting.EventViewModelStarting.OpenHome -> {
+                    runCatching {
+                        provider.getActivities(Activities.RickyAndMortyActivity).navigate(activity)
+                    }.onSuccess {
+                        delay(100)
+                        activity.finish()
+                    }.onFailure {
+                        activity.showToast("Wrong!")
+                    }
+                }
+            }
+        }
     }
     LaunchedEffect(key1 = movePage) {
         if (2 != pagerState.currentPage) {
@@ -61,14 +83,7 @@ fun StartingScreen(
                 )
             }
         } else {
-            runCatching {
-                provider.getActivities(Activities.RickyAndMortyActivity).navigate(activity)
-            }.onSuccess {
-                delay(100)
-                activity.finish()
-            }.onFailure {
-
-            }
+            viewModel.open(ViewModelStarting.EventUiStarting.OpenHome)
         }
     }
 

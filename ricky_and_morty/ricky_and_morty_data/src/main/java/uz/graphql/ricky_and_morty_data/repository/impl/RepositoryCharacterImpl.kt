@@ -1,5 +1,6 @@
 package uz.graphql.ricky_and_morty_data.repository.impl
 
+import android.util.Log
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import uz.graphql.CharacterListQuery
@@ -65,8 +66,12 @@ class RepositoryCharacterImpl(private var client: ApolloClient) : RepositoryChar
                     )
                 )
             } else {
+                Log.d("TTTTDD","keldi")
+                Log.d("TTTTDD",filter.toString())
                 val result = client.query(CharacterListWithFilterQuery(filter, page)).execute()
+                Log.d("TTTTDD",result.toString())
                 val characters = result.data?.characters
+                Log.d("TTTTDD",characters.toString())
                 if (characters != null)
                     ResponseApi.Success(characters)
                 else ResponseApi.Error("Characters can not find")

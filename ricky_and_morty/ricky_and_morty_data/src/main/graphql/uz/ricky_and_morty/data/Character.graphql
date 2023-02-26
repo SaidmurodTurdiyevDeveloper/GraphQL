@@ -12,6 +12,9 @@ query CharacterList($page: Int!){
             name
             status
             created
+            gender
+            species
+            type
         }
     }
 }
@@ -29,6 +32,9 @@ query CharacterListWithFilter($filter :FilterCharacter!,$page: Int!){
             name
             status
             created
+            gender
+            species
+            type
         }
     }
 }
