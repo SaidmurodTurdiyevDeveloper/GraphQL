@@ -1,6 +1,7 @@
 package uz.graphql.ricky_and_morty_presenter.vieewModels.characters
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -160,11 +161,10 @@ class ViewModelCharactersList @Inject constructor(
                     if (list.isEmpty())
                         _event.emit(EventViewModelCharactersList.ShowToast("You have not any selected data"))
                     else {
-                        val idList = Gson().toJson(list)
+                        val idList = Gson().toJson(list,List::class.java)
                         _event.emit(EventViewModelCharactersList.OpenCharactersListWithDetailsScreen(idList))
                     }
                     _state.value = _state.value.copy(selectCount = 0)
-
                 }
             }
         }
@@ -175,7 +175,7 @@ class ViewModelCharactersList @Inject constructor(
         val isLoading: Boolean = false,
         val isLoadingItem: Boolean = false,
         val error: String? = null,
-        val characters: List<CharactersListData> = ArrayList(),
+        val characters: List<CharactersListData> = emptyList(),
         val selectCount: Int = 0
     )
 

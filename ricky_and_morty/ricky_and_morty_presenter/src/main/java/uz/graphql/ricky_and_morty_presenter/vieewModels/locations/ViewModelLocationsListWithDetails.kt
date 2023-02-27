@@ -17,10 +17,10 @@ import kotlinx.coroutines.launch
 import uz.graphql.common_utills.other.Constants
 import uz.graphql.common_utills.other.ResponseData
 import uz.graphql.ricky_and_morty_domen.model.location.LocationListWithDetailsData
+import uz.graphql.ricky_and_morty_domen.model.location.LocationResidentData
 import uz.graphql.ricky_and_morty_domen.use_cases.location.UseCaseLocation
 import uz.graphql.ricky_and_morty_presenter.utils.MoveIdConstants
 import uz.graphql.ricky_and_morty_presenter.utils.loadWithNetworkNetwork
-import uz.graphql.ricky_and_morty_presenter.vieewModels.episodes.ViewModelEpisodesListWithDetails
 import javax.inject.Inject
 
 /**
@@ -38,13 +38,13 @@ class ViewModelLocationsListWithDetails @Inject constructor(
 
     private var idList = emptyList<String>()
 
-    private val _event = MutableSharedFlow<ViewModelEpisodesListWithDetails.EventViewModelEpisodesListWithDetails>()
+    private val _event = MutableSharedFlow<EventViewModelLocationsListWithDetails>()
     val event get() = _event.asSharedFlow()
 
     init {
-        savedStateHandle.get<String>(MoveIdConstants.moveCharactersIdsList).let { json ->
+        savedStateHandle.get<String>(MoveIdConstants.moveLocationsIdsList).let { json ->
             idList = try {
-                Gson().fromJson<List<String>>(json, String::class.java)
+                Gson().fromJson<List<String>>(json, List::class.java)
             } catch (e: Exception) {
                 emptyList()
             }
@@ -83,6 +83,16 @@ class ViewModelLocationsListWithDetails @Inject constructor(
                     load()
                 }
             }
+            is EventUILocationsListWithDetails.OpenResidents -> {
+                viewModelScope.launch {
+                    _event.emit(EventViewModelLocationsListWithDetails.OpenResidents(eventUi.id))
+                }
+            }
+            is EventUILocationsListWithDetails.OpenLocation -> {
+                viewModelScope.launch {
+                    _event.emit(EventViewModelLocationsListWithDetails.OpenLocation(eventUi.id))
+                }
+            }
         }
     }
 
@@ -94,5 +104,15 @@ class ViewModelLocationsListWithDetails @Inject constructor(
 
     sealed class EventUILocationsListWithDetails {
         object Refresh : EventUILocationsListWithDetails()
+        data class OpenResidents(val id: String) : EventUILocationsListWithDetails()
+        data class OpenLocation(val id: String) : EventUILocationsListWithDetails()
+
+    }
+
+
+
+    sealed class EventViewModelLocationsListWithDetails {
+        data class OpenResidents(val id: String) : EventViewModelLocationsListWithDetails()
+        data class OpenLocation(val id: String) : EventViewModelLocationsListWithDetails()
     }
 }

@@ -1,5 +1,6 @@
 package uz.graphql.ricky_and_morty_domen.use_cases.episode
 
+import android.util.Log
 import uz.graphql.ricky_and_morty_domen.model.episode.EpisodesListData
 import uz.graphql.ricky_and_morty_domen.model.episode.toEpisodesList
 import kotlinx.coroutines.flow.Flow
@@ -16,8 +17,9 @@ class GetEpisodesList(private val repositoryCharacter: RepositoryEpisode) {
     operator fun invoke(page: Int? = null): Flow<ResponseData<List<EpisodesListData>>> = invokeUseCase(page?:currentPage, repositoryCharacter::getEpisodes) { episodes ->
         val newList = episodes.toEpisodesList()
         if (page == 0)
-            list.clear()
-        list.addAll(newList)
+            list = ArrayList(newList)
+        else
+            list.addAll(newList)
         currentPage = episodes.info?.next?:-1
         list
     }

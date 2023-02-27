@@ -10,4 +10,5 @@ object MoveIdConstants {
     const val moveEpisodesIdsList="move_episodes_ids_list"
     const val moveLocationId="move_location_id"
     const val moveLocationsIdsList="move_locations_ids_list"
+    const val moveResidentData="move_resident_data"
 }

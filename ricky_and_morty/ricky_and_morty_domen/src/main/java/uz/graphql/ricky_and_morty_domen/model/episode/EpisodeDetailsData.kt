@@ -8,7 +8,7 @@ import uz.graphql.EpisodeQuery
 data class EpisodeDetailsData(
     val episode: String,
     val name: String,
-    val airData: String,
+    val airDate: String,
     val created: String,
     val characters: List<EpisodeCharactersData>
 )
@@ -26,17 +26,17 @@ fun EpisodeQuery.Episode.toEpisode(): EpisodeDetailsData {
     val newCharacters = characters.map { data ->
         EpisodeCharactersData(
             id = data?.id ?: "",
-            name = data?.name ?: "",
+            name = data?.name?.ifBlank { "-" } ?: "",
             image = data?.image ?: "",
             created = data?.created ?: "",
-            type = data?.type ?: "",
-            status = data?.status ?: ""
+            type = data?.type?.ifBlank { "-" } ?: "",
+            status = data?.status?.ifBlank { "-" } ?: ""
         )
     }
     return EpisodeDetailsData(
-        episode = episode ?: "",
-        name = name ?: "",
-        airData = air_date ?: "",
+        episode = episode?.ifBlank { "-" } ?: "",
+        name = name?.ifBlank { "-" } ?: "",
+        airDate = air_date?.ifBlank { "-" } ?: "",
         created = created ?: "",
         characters = newCharacters
     )

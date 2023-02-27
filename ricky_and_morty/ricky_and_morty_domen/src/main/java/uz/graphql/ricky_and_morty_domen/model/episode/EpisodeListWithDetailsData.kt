@@ -6,6 +6,7 @@ import uz.graphql.EpisodesWithIdsQuery
  * Created by Saidmurod Turdiyev (S.M.T) on 2/18/2023 3:16 PM for Rick And Morty GraphQL.
  */
 data class EpisodeListWithDetailsData(
+    val id: String,
     val episode: String,
     val name: String,
     val airDate: String,
@@ -22,13 +23,15 @@ fun EpisodesWithIdsQuery.EpisodesById.toEpisode(): EpisodeListWithDetailsData {
     val newCharacterList = characters.map { data ->
         EpisodesWithDetailsCharactersData(
             id = data?.id ?: "",
-            name = data?.name ?: ""
+            name = data?.name?.ifBlank { "-" } ?: ""
         )
     }
+
     return EpisodeListWithDetailsData(
-        episode = episode ?: "",
-        name = name ?: "",
-        airDate = air_date ?: "",
+        id=id?:"",
+        episode = episode?.ifBlank { "-" } ?: "",
+        name = name?.ifBlank { "-" } ?: "",
+        airDate = air_date?.ifBlank { "-" } ?: "",
         created = created ?: "",
         characters = newCharacterList
     )
@@ -42,6 +45,7 @@ fun List<EpisodesWithIdsQuery.EpisodesById?>.toEpisodesList(): List<EpisodeListW
 
 private fun createEmptyEpisode(): EpisodeListWithDetailsData {
     return EpisodeListWithDetailsData(
+        id="",
         episode = "",
         name = "",
         airDate = "",

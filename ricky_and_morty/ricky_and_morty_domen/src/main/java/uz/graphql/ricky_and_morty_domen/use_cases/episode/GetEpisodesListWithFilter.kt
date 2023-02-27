@@ -30,8 +30,9 @@ class GetEpisodesListWithFilter(private val repositoryCharacter: RepositoryEpiso
         ) { episodes ->
             val newList = episodes.toEpisodesList()
             if (page == 0)
-                list.clear()
-            list.addAll(newList)
+                list = ArrayList(newList)
+            else
+                list.addAll(newList)
             currentPage = episodes.info?.next ?: -1
             list
         }

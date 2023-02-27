@@ -16,8 +16,9 @@ class GetLocationsList(private val repositoryCharacter: RepositoryLocation) {
     operator fun invoke(page: Int? = null): Flow<ResponseData<List<LocationsListData>>> = invokeUseCase(page?:currentPage, repositoryCharacter::getLocations) { locations ->
         val newList = locations.toLocationsList()
         if (page == 0)
-            list.clear()
-        list.addAll(newList)
+            list = ArrayList(newList)
+        else
+            list.addAll(newList)
         currentPage = locations.info?.next?:-1
         list
     }

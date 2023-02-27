@@ -22,28 +22,28 @@ fun CharacterQuery.Character.toCharacter(): CharacterDetailsData {
     val newEpisode = episode.map { data ->
         CharacterEpisodesData(
             id = data?.id ?: "",
-            name = data?.name ?: "",
-            episode = data?.episode ?: "",
-            created = data?.created ?: "",
-            airDate = data?.air_date ?: ""
+            name = data?.name?.ifBlank { "-" } ?: "",
+            episode = data?.episode?.ifBlank { "-" } ?: "",
+            created = data?.created?.ifBlank { "-" } ?: "",
+            airDate = data?.air_date?.ifBlank { "-" } ?: ""
         )
     }
     return CharacterDetailsData(
         image = image ?: "",
-        name = name ?: "",
-        status = status ?: "",
+        name = name?.ifBlank { "-" } ?: "",
+        status = status?.ifBlank { "-" } ?: "",
         created = created ?: "",
         episode = newEpisode,
-        gender = gender ?: "",
+        gender = gender?.ifBlank { "-" } ?: "",
         location = CharacterLocation(
             id = location?.id ?: "",
-            name = location?.name ?: "",
-            type = location?.type ?: ""
+            name = location?.name?.ifBlank { "-" } ?: "",
+            type = location?.type?.ifBlank { "-" } ?: ""
         ),
         origin = CharacterLocation(
             id = origin?.id ?: "",
-            name = origin?.name ?: "",
-            type = origin?.type ?: ""
+            name = origin?.name?.ifBlank { "-" } ?: "",
+            type = origin?.type?.ifBlank { "-" } ?: ""
         ),
         species = species ?: "",
         type = type ?: ""

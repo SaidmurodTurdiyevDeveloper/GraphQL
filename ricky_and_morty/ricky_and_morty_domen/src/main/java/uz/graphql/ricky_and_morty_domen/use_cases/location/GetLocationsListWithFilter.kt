@@ -31,8 +31,9 @@ class GetLocationsListWithFilter(private val repositoryCharacter: RepositoryLoca
         ) { locations ->
             val newList = locations.toLocationsList()
             if (page == 0)
-                list.clear()
-            list.addAll(newList)
+                list = ArrayList(newList)
+            else
+                list.addAll(newList)
             currentPage = locations.info?.next?:-1
             list
         }

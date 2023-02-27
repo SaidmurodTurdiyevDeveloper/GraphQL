@@ -1,19 +1,23 @@
 package uz.graphql.ricky_and_morty_presenter.screens.characters
 
-import androidx.compose.foundation.clickable
+import android.util.Log
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -27,9 +31,14 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.flow.collectLatest
 import uz.graphql.ricky_and_morty_domen.model.character.CharacterDetailsData
 import uz.graphql.ricky_and_morty_presenter.navigation.ScreenRoutes
+import uz.graphql.ricky_and_morty_presenter.ui.theme.DarkSelect
+import uz.graphql.ricky_and_morty_presenter.ui.theme.LightSelect
+import uz.graphql.ricky_and_morty_presenter.ui.theme.White
 import uz.graphql.ricky_and_morty_presenter.utils.DefaultScreenError
 import uz.graphql.ricky_and_morty_presenter.utils.DefaultScreenLoading
 import uz.graphql.ricky_and_morty_presenter.vieewModels.characters.ViewModelCharacterDetails
+import java.time.ZonedDateTime
+import kotlin.random.Random
 
 /**
  * Created by Saidmurod Turdiyev (S.M.T) on 2/22/2023 3:36 PM for Ricky And Morty.
@@ -61,7 +70,9 @@ fun ScreenCharacterDetails(
             TopAppBar(
                 title = {
                     Text(text = "Character Details")
-                }, navigationIcon = {
+                },
+                backgroundColor = if (isSystemInDarkTheme()) Color.DarkGray else White,
+                navigationIcon = {
                     IconButton(onClick = {
                         navController.navigateUp()
                     }) {
@@ -92,6 +103,13 @@ fun ScreenCharacterDetails(
                         viewModel.onEvent(ViewModelCharacterDetails.EventUICharacterDetails.OpenLocationDetailsScreen(id))
                     }
                 )
+            } else {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = "We cannot find any Character",
+                        fontSize = 18.sp
+                    )
+                }
             }
         }
     }
@@ -103,29 +121,48 @@ private fun CharacterScreen(
     openEpisode: (String) -> Unit,
     openLocation: (String) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    val state = rememberScrollState()
+
+    val createdTime = try {
+        ZonedDateTime.parse(item.created)
+    } catch (e: Exception) {
+        null
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(
+                state = state,
+                enabled = true
+            )
+    ) {
+        AsyncImage(
+            modifier = Modifier
+                .height(300.dp)
+                .fillMaxWidth(),
+            model = item.image,
+            contentDescription = "Image character",
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = item.name,
             style = TextStyle(
                 fontSize = 22.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color(
+                    Random.nextFloat(),
+                    Random.nextFloat(),
+                    Random.nextFloat(),
+                    1f
+                )
             ),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(16.dp))
-        AsyncImage(
-            modifier = Modifier
-                .height(300.dp)
-                .fillMaxWidth()
-                .clip(shape = RoundedCornerShape(4)),
-            model = item.image,
-            contentDescription = "Image character",
-            contentScale = ContentScale.Crop
-        )
-        Spacer(modifier = Modifier.height(16.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -133,20 +170,32 @@ private fun CharacterScreen(
                 text = "Status",
                 style = TextStyle(
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color(
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        1f
+                    )
                 )
             )
             Text(
                 text = item.status,
                 style = TextStyle(
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        1f
+                    )
                 )
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -154,20 +203,39 @@ private fun CharacterScreen(
                 text = "Species",
                 style = TextStyle(
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color(
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        1f
+                    )
                 )
             )
             Text(
                 text = item.species,
                 style = TextStyle(
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        1f
+                    )
                 )
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+        Divider(color =Color(
+            Random.nextFloat(),
+            Random.nextFloat(),
+            Random.nextFloat(),
+            1f
+        ) )
+        Spacer(modifier = Modifier.height(12.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -175,7 +243,13 @@ private fun CharacterScreen(
                 text = "Location",
                 style = TextStyle(
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color(
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        1f
+                    )
                 )
             )
             Column(horizontalAlignment = Alignment.End, modifier = Modifier.clickable {
@@ -185,7 +259,13 @@ private fun CharacterScreen(
                     text = item.location.name,
                     style = TextStyle(
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(
+                            Random.nextFloat(),
+                            Random.nextFloat(),
+                            Random.nextFloat(),
+                            1f
+                        )
                     )
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -193,14 +273,27 @@ private fun CharacterScreen(
                     text = item.location.type,
                     style = TextStyle(
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(
+                            Random.nextFloat(),
+                            Random.nextFloat(),
+                            Random.nextFloat(),
+                            1f
+                        )
                     )
                 )
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+        Divider(color =Color(
+            Random.nextFloat(),
+            Random.nextFloat(),
+            Random.nextFloat(),
+            1f
+        ) )
+        Spacer(modifier = Modifier.height(12.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -208,7 +301,13 @@ private fun CharacterScreen(
                 text = "Orign",
                 style = TextStyle(
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color(
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        1f
+                    )
                 )
             )
             Column(horizontalAlignment = Alignment.End,
@@ -219,7 +318,13 @@ private fun CharacterScreen(
                     text = item.origin.name,
                     style = TextStyle(
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(
+                            Random.nextFloat(),
+                            Random.nextFloat(),
+                            Random.nextFloat(),
+                            1f
+                        )
                     )
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -227,31 +332,64 @@ private fun CharacterScreen(
                     text = item.origin.type,
                     style = TextStyle(
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(
+                            Random.nextFloat(),
+                            Random.nextFloat(),
+                            Random.nextFloat(),
+                            1f
+                        )
                     )
                 )
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+        Divider(color =Color(
+            Random.nextFloat(),
+            Random.nextFloat(),
+            Random.nextFloat(),
+            1f
+        ) )
+        Spacer(modifier = Modifier.height(12.dp))
         Text(
+            modifier = Modifier.padding(start = 12.dp),
             text = "Episodes",
             style = TextStyle(
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color(
+                    Random.nextFloat(),
+                    Random.nextFloat(),
+                    Random.nextFloat(),
+                    1f
+                )
             )
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         LazyRow {
             items(item.episode) { episode ->
-                Card(modifier = Modifier.clickable {
-                    openEpisode.invoke(episode.id)
-                }) {
+                val time = try {
+                    ZonedDateTime.parse(episode.created)
+                } catch (e: Exception) {
+                    null
+                }
+                Card(
+                    modifier = Modifier.padding(4.dp).clickable {
+                        openEpisode.invoke(episode.id)
+                    }
+                ) {
                     Column(modifier = Modifier.padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = episode.name,
                             style = TextStyle(
                                 fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                color = Color(
+                                    Random.nextFloat(),
+                                    Random.nextFloat(),
+                                    Random.nextFloat(),
+                                    1f
+                                )
                             )
                         )
                         Spacer(modifier = Modifier.height(4.dp))
@@ -259,7 +397,13 @@ private fun CharacterScreen(
                             text = episode.episode,
                             style = TextStyle(
                                 fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(
+                                    Random.nextFloat(),
+                                    Random.nextFloat(),
+                                    Random.nextFloat(),
+                                    1f
+                                )
                             )
                         )
                         Spacer(modifier = Modifier.height(4.dp))
@@ -267,24 +411,37 @@ private fun CharacterScreen(
                             text = episode.airDate,
                             style = TextStyle(
                                 fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(
+                                    Random.nextFloat(),
+                                    Random.nextFloat(),
+                                    Random.nextFloat(),
+                                    1f
+                                )
                             )
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = episode.created,
+                            text = time?.dayOfMonth.toString() + "-" + time?.monthValue.toString() + "-" + time?.year,
                             style = TextStyle(
                                 fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(
+                                    Random.nextFloat(),
+                                    Random.nextFloat(),
+                                    Random.nextFloat(),
+                                    1f
+                                )
                             )
                         )
                     }
                 }
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(32.dp))
+
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -292,20 +449,32 @@ private fun CharacterScreen(
                 text = "Gender",
                 style = TextStyle(
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color(
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        1f
+                    )
                 )
             )
             Text(
                 text = item.gender,
                 style = TextStyle(
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        1f
+                    )
                 )
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -313,17 +482,30 @@ private fun CharacterScreen(
                 text = "Created",
                 style = TextStyle(
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color(
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        1f
+                    )
                 )
             )
             Text(
-                text = item.created,
+                text = createdTime?.dayOfMonth.toString() + "-" + createdTime?.monthValue.toString() + "-" + createdTime?.year,
                 style = TextStyle(
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        1f
+                    )
                 )
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(32.dp))
     }
+
 }

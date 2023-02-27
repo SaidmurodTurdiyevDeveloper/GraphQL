@@ -7,6 +7,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Surface
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -75,6 +76,8 @@ fun ItemViewCharacter(
         Row(
             modifier = Modifier
                 .fillMaxSize()
+                .background(color = if (item.select)
+                    selectedColor else Color.Transparent)
         ) {
             AsyncImage(
                 modifier = Modifier
@@ -148,15 +151,6 @@ fun ItemViewCharacter(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-
         }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    color = if (item.select)
-                        selectedColor else Color.Transparent
-                )
-        )
     }
 }

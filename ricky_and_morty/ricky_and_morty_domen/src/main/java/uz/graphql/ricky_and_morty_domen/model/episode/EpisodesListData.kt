@@ -11,15 +11,16 @@ data class EpisodesListData(
     val id: String,
     val name: String,
     val episode: String,
-    val created: String
+    val created: String,
+    var select: Boolean = false
 )
 
 fun EpisodeListQuery.Episodes.toEpisodesList(): List<EpisodesListData> {
     return this.results?.map { data ->
         EpisodesListData(
             id = data?.id ?: "",
-            name = data?.name ?: "",
-            episode = data?.episode ?: "",
+            name = data?.name?.ifBlank { "-" } ?: "",
+            episode = data?.episode?.ifBlank { "-" } ?: "",
             created = data?.created ?: ""
         )
     } ?: emptyList()
@@ -29,8 +30,8 @@ fun EpisodeListWithFilterQuery.Episodes.toEpisodesList(): List<EpisodesListData>
     return this.results?.map { data ->
         EpisodesListData(
             id = data?.id ?: "",
-            name = data?.name ?: "",
-            episode = data?.episode ?: "",
+            name = data?.name?.ifBlank { "-" } ?: "",
+            episode = data?.episode?.ifBlank { "-" } ?: "",
             created = data?.created ?: ""
         )
     } ?: emptyList()

@@ -1,6 +1,7 @@
 package uz.graphql.ricky_and_morty_presenter.vieewModels.episodes
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +19,7 @@ import uz.graphql.common_utills.other.ResponseData
 import uz.graphql.ricky_and_morty_domen.model.episode.EpisodesListData
 import uz.graphql.ricky_and_morty_domen.use_cases.episode.UseCaseEpisode
 import uz.graphql.ricky_and_morty_presenter.utils.loadWithNetworkNetwork
+import uz.graphql.ricky_and_morty_presenter.vieewModels.characters.ViewModelCharactersList
 import javax.inject.Inject
 
 /**
@@ -37,8 +39,6 @@ class ViewModelEpisodesList @Inject constructor(
 
     private val _event = MutableSharedFlow<EventViewModelEpisodesList>()
     val event get() = _event.asSharedFlow()
-
-    private var selectedList = ArrayList<String>()
 
     init {
         loadWithNetworkNetwork(context, errorBlock = {
@@ -66,10 +66,13 @@ class ViewModelEpisodesList @Inject constructor(
                         _state.value = state.value.copy(error = response.message)
                     }
                     is ResponseData.Loading -> {
-                        _state.value = state.value.copy(isLoading = response.isLoading)
-                    }
+                        if (state.value.episodes.isEmpty()) {
+                            _state.value = state.value.copy(isLoading = response.isLoading)
+                        } else {
+                            _state.value = state.value.copy(isLoadingItem = response.isLoading)
+                        }                    }
                     is ResponseData.Success -> {
-                        _state.value = state.value.copy(episodes = state.value.episodes, error = null)
+                        _state.value = state.value.copy(episodes = response.data, error = null)
                     }
                 }
             }
@@ -98,10 +101,19 @@ class ViewModelEpisodesList @Inject constructor(
                 }
             }
             is EventUIEpisodesList.SelectItem -> {
-                if (isSelected(eventUi.id))
-                    selectedList.remove(eventUi.id)
-                else
-                    selectedList.add(eventUi.id)
+                val selectCount = state.value.selectCount
+                val newList = state.value.episodes.toMutableList().map {
+                    if (it.id == eventUi.episode.id)
+                        it.copy(select = eventUi.episode.select.not())
+                    else
+                        it
+                }
+                _state.value = state.value.copy(
+                    episodes = newList,
+                    selectCount = if (eventUi.episode.select)
+                        selectCount - 1
+                    else selectCount + 1
+                )
             }
 
             EventUIEpisodesList.LoadNextPage -> {
@@ -111,28 +123,39 @@ class ViewModelEpisodesList @Inject constructor(
             }
             EventUIEpisodesList.OpenEpisodesListWithDetailsScreen -> {
                 viewModelScope.launch {
-                    val idList = Gson().toJson(selectedList)
-                    _event.emit(EventViewModelEpisodesList.OpenEpisodesListWithDetailsScreen(idList))
+                    val list = ArrayList<String>()
+                    state.value.episodes.forEach {
+                        if (it.select) {
+                            list.add(it.id)
+                            it.select = false
+                        }
+                    }
+                    if (list.isEmpty())
+                        _event.emit(EventViewModelEpisodesList.ShowToast("You have not any selected data"))
+                    else {
+                        val idList = Gson().toJson(list,List::class.java)
+                        _event.emit(EventViewModelEpisodesList.OpenEpisodesListWithDetailsScreen(idList))
+                    }
+                    _state.value = _state.value.copy(selectCount = 0)
                 }
             }
             EventUIEpisodesList.ClearSelectedItem -> {
-                selectedList.clear()
-                _state.value = state.value.copy()
+                val newList = state.value.episodes.toMutableList().map {
+                    it.copy(select = false)
+                }
+                _state.value = _state.value.copy(episodes = newList, selectCount = 0)
             }
         }
     }
 
-    fun isSelected(id: String): Boolean {
-        if (selectedList.isEmpty())
-            return false
-        return selectedList.contains(id)
-    }
 
 
     data class StateScreenViewModelEpisodesList(
         val isLoading: Boolean = false,
+        val isLoadingItem: Boolean = false,
         val error: String? = null,
-        val episodes: List<EpisodesListData> = emptyList()
+        val episodes: List<EpisodesListData> = emptyList(),
+        val selectCount: Int = 0
     )
 
     sealed class EventUIEpisodesList {
@@ -143,21 +166,21 @@ class ViewModelEpisodesList @Inject constructor(
             val name: String? = null
         ) : EventUIEpisodesList()
 
-        data class SelectItem(val id: String) : EventUIEpisodesList()
-
-        object ClearSelectedItem : EventUIEpisodesList()
+        data class SelectItem(val episode: EpisodesListData) : EventUIEpisodesList()
 
         object LoadList : EventUIEpisodesList()
 
         object OpenEpisodesListWithDetailsScreen : EventUIEpisodesList()
 
         object LoadNextPage : EventUIEpisodesList()
+        object ClearSelectedItem : EventUIEpisodesList()
+
     }
 
     sealed class EventViewModelEpisodesList {
         data class OpenEpisodeDetailsScreen(val id: String) : EventViewModelEpisodesList()
 
-        data class OpenEpisodesListWithDetailsScreen(val idListGson: String) : EventViewModelEpisodesList()
+        data class OpenEpisodesListWithDetailsScreen(val idList: String) : EventViewModelEpisodesList()
 
         data class ShowToast(val message: String) : EventViewModelEpisodesList()
 

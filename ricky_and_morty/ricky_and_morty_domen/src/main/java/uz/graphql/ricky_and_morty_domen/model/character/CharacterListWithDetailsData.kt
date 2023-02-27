@@ -6,6 +6,7 @@ import uz.graphql.CharactersWithIdsQuery
  * Created by Saidmurod Turdiyev (S.M.T) on 2/18/2023 11:47 AM for Rick And Morty GraphQL.
  */
 data class CharacterListWithDetailsData(
+    val id: String,
     val image: String,
     val name: String,
     val status: String,
@@ -27,28 +28,30 @@ fun CharactersWithIdsQuery.CharactersById.toCharacter(): CharacterListWithDetail
         )
     }
     return CharacterListWithDetailsData(
+        id=id?:"",
         image = image ?: "",
-        name = name ?: "",
-        status = status ?: "",
+        name = name?.ifBlank { "-" } ?: "",
+        status = status?.ifBlank { "-" } ?: "",
         created = created ?: "",
         episode = newEpisode,
-        gender = gender ?: "",
+        gender = gender?.ifBlank { "-" } ?: "",
         location = CharacterWithDetailsLocation(
             id = location?.id ?: "",
-            name = location?.name ?: "",
-            type = location?.type ?: ""
+            name = location?.name?.ifBlank { "-" } ?: "",
+            type = location?.type?.ifBlank { "-" } ?: ""
         ),
         origin = CharacterWithDetailsLocation(
             id = origin?.id ?: "",
-            name = origin?.name ?: "",
-            type = origin?.type ?: ""
+            name = origin?.name?.ifBlank { "-" } ?: "",
+            type = origin?.type?.ifBlank { "-" } ?: ""
         ),
-        species = species ?: "",
-        type = type ?: ""
+        species = species?.ifBlank { "-" } ?: "",
+        type = type?.ifBlank { "-" } ?: ""
     )
 }
 
 private fun createEmptyCharacter(): CharacterListWithDetailsData = CharacterListWithDetailsData(
+    id = "",
     image = "",
     name = "",
     status = "",

@@ -6,6 +6,7 @@ import uz.graphql.LocationsWithIdsQuery
  * Created by Saidmurod Turdiyev (S.M.T) on 2/18/2023 3:17 PM for Rick And Morty GraphQL.
  */
 data class LocationListWithDetailsData(
+    val id: String,
     val dimension: String,
     val name: String,
     val type: String,
@@ -26,16 +27,17 @@ fun LocationsWithIdsQuery.LocationsById.toLocation(): LocationListWithDetailsDat
     val newResidentsList = residents.map { data ->
         LocationWithDetailsResidentData(
             id = data?.id ?: "",
-            name = data?.name ?: "",
-            status = data?.status ?: "",
+            name = data?.name?.ifBlank { "-" } ?: "",
+            status = data?.status?.ifBlank { "-" } ?: "",
             image = data?.image ?: "",
             created = data?.created ?: ""
         )
     }
     return LocationListWithDetailsData(
+        id=id?:"",
         dimension = dimension ?: "",
-        name = name ?: "",
-        type = type ?: "",
+        name = name?.ifBlank { "-" } ?: "",
+        type = type?.ifBlank { "-" } ?: "",
         created = created ?: "",
         residents = newResidentsList
     )
@@ -49,6 +51,7 @@ fun List<LocationsWithIdsQuery.LocationsById?>.toLocationsList(): List<LocationL
 
 private fun createEmptyLocation(): LocationListWithDetailsData {
     return LocationListWithDetailsData(
+        id="",
         dimension = "",
         name = "",
         type = "",

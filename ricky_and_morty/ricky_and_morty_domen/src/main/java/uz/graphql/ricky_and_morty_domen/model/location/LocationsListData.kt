@@ -12,7 +12,8 @@ data class LocationsListData(
     val dimension:String,
     val name:String,
     val type:String,
-    val created:String
+    val created:String,
+    var select:Boolean=false
 )
 
 
@@ -20,9 +21,9 @@ fun LocationListQuery.Locations.toLocationsList(): List<LocationsListData> {
     return this.results?.map { data ->
         LocationsListData(
             id = data?.id ?: "",
-            dimension = data?.dimension ?: "",
-            name = data?.name ?: "",
-            type=data?.type?:"",
+            dimension = data?.dimension?.ifBlank { "-" } ?: "",
+            name = data?.name?.ifBlank { "-" } ?: "",
+            type=data?.type?.ifBlank { "-" }?:"",
             created = data?.created ?: ""
         )
     } ?: emptyList()
@@ -32,9 +33,9 @@ fun LocationListWithFilterQuery.Locations.toLocationsList(): List<LocationsListD
     return this.results?.map { data ->
         LocationsListData(
             id = data?.id ?: "",
-            dimension = data?.dimension ?: "",
-            name = data?.name ?: "",
-            type=data?.type?:"",
+            dimension = data?.dimension?.ifBlank { "-" } ?: "",
+            name = data?.name?.ifBlank { "-" } ?: "",
+            type=data?.type?.ifBlank { "-" }?:"",
             created = data?.created ?: ""
         )
     } ?: emptyList()

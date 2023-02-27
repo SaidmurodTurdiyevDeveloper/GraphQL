@@ -69,6 +69,7 @@ query Character($id: ID!){
 }
 query CharactersWithIds($ids:[ID!]!){
     charactersByIds(ids:$ids){
+        id
         image
         name
         status

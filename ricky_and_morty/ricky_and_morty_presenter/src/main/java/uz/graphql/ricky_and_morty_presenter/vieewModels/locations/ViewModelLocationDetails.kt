@@ -7,12 +7,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import uz.graphql.common_utills.other.ResponseData
 import uz.graphql.ricky_and_morty_domen.model.location.LocationDetailsData
+import uz.graphql.ricky_and_morty_domen.model.location.LocationResidentData
 import uz.graphql.ricky_and_morty_domen.use_cases.location.UseCaseLocation
 import uz.graphql.ricky_and_morty_presenter.utils.MoveIdConstants
 import uz.graphql.ricky_and_morty_presenter.utils.loadWithNetworkNetwork
@@ -25,18 +29,21 @@ import javax.inject.Inject
 class ViewModelLocationDetails @Inject constructor(
     @ApplicationContext
     context: Context,
-    private val useCase:UseCaseLocation,
+    private val useCase: UseCaseLocation,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _state: MutableState<StateScreenViewModelLocationDetails> = mutableStateOf(StateScreenViewModelLocationDetails())
     val state: State<StateScreenViewModelLocationDetails> get() = _state
-    private var id=""
+    private var id = ""
+
+    private val _event = MutableSharedFlow<EventViewModelLocationDetails>()
+    val event get() = _event.asSharedFlow()
 
     init {
         savedStateHandle.get<String>(MoveIdConstants.moveLocationId).let { newId ->
             if (newId != null) {
-                id=newId
+                id = newId
                 loadWithNetworkNetwork(
                     context,
                     errorBlock = {
@@ -51,7 +58,7 @@ class ViewModelLocationDetails @Inject constructor(
         }
     }
 
-    private suspend fun load(){
+    private suspend fun load() {
         useCase.getLocation(id).collectLatest { response ->
             when (response) {
                 is ResponseData.Error -> {
@@ -67,11 +74,16 @@ class ViewModelLocationDetails @Inject constructor(
         }
     }
 
-    fun onEvent(eventUi:EventUILocationDetails) {
+    fun onEvent(eventUi: EventUILocationDetails) {
         when (eventUi) {
             EventUILocationDetails.Refresh -> {
                 viewModelScope.launch {
                     load()
+                }
+            }
+            is EventUILocationDetails.OpenResidents -> {
+                viewModelScope.launch {
+                    _event.emit(EventViewModelLocationDetails.OpenResidents(eventUi.id))
                 }
             }
         }
@@ -86,5 +98,10 @@ class ViewModelLocationDetails @Inject constructor(
 
     sealed class EventUILocationDetails {
         object Refresh : EventUILocationDetails()
+        data class OpenResidents(val id: String) : EventUILocationDetails()
+    }
+
+    sealed class EventViewModelLocationDetails {
+        data class OpenResidents(val id: String) : EventViewModelLocationDetails()
     }
 }

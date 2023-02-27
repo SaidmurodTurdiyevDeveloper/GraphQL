@@ -75,13 +75,14 @@ private fun LoadRadioButtonItems(
     var selectedIndex by remember {
         mutableStateOf(selectIndex)
     }
+    if (selectedIndex != items.size - 1)
+        itemClick.invoke(items[selectedIndex])
     items.forEachIndexed { index, item ->
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
             RadioButton(
                 selected = selectedIndex == index, onClick = {
-                    Log.d("TTTTDD", item)
                     itemClick.invoke(item)
                     selectedIndex = index
                 },
@@ -100,7 +101,6 @@ private fun LoadRadioButtonItems(
             ClickableText(
                 text = annotatedString,
                 onClick = {
-                    Log.d("TTTTDD", item)
                     itemClick.invoke(item)
                     selectedIndex = index
                 }

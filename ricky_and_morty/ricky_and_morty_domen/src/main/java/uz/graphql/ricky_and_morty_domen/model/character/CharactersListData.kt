@@ -25,12 +25,12 @@ fun CharacterListQuery.Characters.toCharactersList(): List<CharactersListData> {
         CharactersListData(
             id = data?.id ?: "",
             image = data?.image ?: "",
-            name = data?.name ?: "",
-            status = data?.status ?: "",
+            name = data?.name?.ifBlank { "-" } ?: "",
+            status = data?.status?.ifBlank { "-" } ?: "",
             created = data?.created ?: "",
-            species = data?.species ?: "",
-            gender = data?.gender ?: "",
-            type = data?.type ?: ""
+            species = data?.species?.ifBlank { "-" } ?: "",
+            gender = data?.gender?.ifBlank { "-" } ?: "",
+            type = data?.type?.ifBlank { "-" } ?: ""
         )
     } ?: emptyList()
 }

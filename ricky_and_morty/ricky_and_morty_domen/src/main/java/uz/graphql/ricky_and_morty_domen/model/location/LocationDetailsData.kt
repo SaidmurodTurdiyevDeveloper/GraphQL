@@ -25,16 +25,17 @@ fun LocationQuery.Location.toLocation(): LocationDetailsData {
     val newResidents = residents.map { data ->
         LocationResidentData(
             id = data?.id ?: "",
-            name = data?.name ?: "",
-            status = data?.status ?: "",
+            name = data?.name?.ifBlank { "-" } ?: "",
+            status = data?.status?.ifBlank { "-" } ?: "",
             image = data?.image ?: "",
             created = data?.created ?: ""
         )
     }
+
     return LocationDetailsData(
         dimension = dimension ?: "",
-        name = name ?: "",
-        type = type ?: "",
+        name = name?.ifBlank { "-" } ?: "",
+        type = type?.ifBlank { "-" } ?: "",
         created = created ?: "",
         residents = newResidents
     )

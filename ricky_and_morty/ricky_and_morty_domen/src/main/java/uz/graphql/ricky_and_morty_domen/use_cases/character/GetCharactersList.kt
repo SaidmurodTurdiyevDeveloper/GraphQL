@@ -1,5 +1,6 @@
 package uz.graphql.ricky_and_morty_domen.use_cases.character
 
+import android.util.Log
 import uz.graphql.ricky_and_morty_domen.model.character.CharactersListData
 import uz.graphql.ricky_and_morty_domen.model.character.toCharactersList
 import kotlinx.coroutines.flow.Flow
@@ -16,8 +17,9 @@ class GetCharactersList(private val repositoryCharacter: RepositoryCharacter) {
     operator fun invoke(page: Int? = null): Flow<ResponseData<List<CharactersListData>>> = invokeUseCase(page ?: currentPage, repositoryCharacter::getCharacters) { characterList ->
         val newList = characterList.toCharactersList()
         if (page == 0)
-            list.clear()
-        list.addAll(newList)
+            list = ArrayList(newList)
+        else
+            list.addAll(newList)
         currentPage = characterList.info?.next ?: -1
         list
     }

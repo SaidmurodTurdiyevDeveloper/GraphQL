@@ -50,6 +50,7 @@ query Location($id: ID!){
 }
 query LocationsWithIds($ids:[ID!]!){
     locationsByIds(ids:$ids){
+        id
         dimension
         name
         type

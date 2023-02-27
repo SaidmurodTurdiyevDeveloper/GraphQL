@@ -40,9 +40,9 @@ class ViewModelEpisodesListWithDetails @Inject constructor(
     val event get() = _event.asSharedFlow()
 
     init {
-        savedStateHandle.get<String>(MoveIdConstants.moveCharactersIdsList).let { json ->
+        savedStateHandle.get<String>(MoveIdConstants.moveEpisodesIdsList).let { json ->
             idList = try {
-                Gson().fromJson<List<String>>(json, String::class.java)
+                Gson().fromJson<List<String>>(json, List::class.java)
             } catch (e: Exception) {
                 emptyList()
             }
@@ -85,6 +85,11 @@ class ViewModelEpisodesListWithDetails @Inject constructor(
                     load()
                 }
             }
+            is EventUIEpisodesListWithDetails.OpenEpisodeDetailsScreen -> {
+                viewModelScope.launch {
+                    _event.emit(EventViewModelEpisodesListWithDetails.OpenEpisodeDetailsScreen(eventUi.id))
+                }
+            }
         }
     }
 
@@ -97,10 +102,12 @@ class ViewModelEpisodesListWithDetails @Inject constructor(
 
     sealed class EventUIEpisodesListWithDetails {
         data class OpenCharacterDetailsScreen(val id: String) : EventUIEpisodesListWithDetails()
+        data class OpenEpisodeDetailsScreen(val id: String) : EventUIEpisodesListWithDetails()
         object Refresh : EventUIEpisodesListWithDetails()
     }
 
     sealed class EventViewModelEpisodesListWithDetails {
         data class OpenCharacterDetailsScreen(val id: String) : EventViewModelEpisodesListWithDetails()
+        data class OpenEpisodeDetailsScreen(val id: String) : EventViewModelEpisodesListWithDetails()
     }
 }

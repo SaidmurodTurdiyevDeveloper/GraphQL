@@ -18,6 +18,7 @@ import uz.graphql.common_utills.other.ResponseData
 import uz.graphql.ricky_and_morty_domen.model.location.LocationsListData
 import uz.graphql.ricky_and_morty_domen.use_cases.location.UseCaseLocation
 import uz.graphql.ricky_and_morty_presenter.utils.loadWithNetworkNetwork
+import uz.graphql.ricky_and_morty_presenter.vieewModels.episodes.ViewModelEpisodesList
 import javax.inject.Inject
 
 /**
@@ -39,8 +40,6 @@ class ViewModelLocationsList @Inject constructor(
     private val _event = MutableSharedFlow<EventViewModelLocationsList>()
     val event get() = _event.asSharedFlow()
 
-    private var selectedList = ArrayList<String>()
-
     init {
         loadWithNetworkNetwork(context, errorBlock = {
             _state.value = state.value.copy(error = Constants.ERROR_NETWORK)
@@ -49,16 +48,16 @@ class ViewModelLocationsList @Inject constructor(
         }
     }
 
-    private suspend fun getLocations(page:Int?=null) {
+    private suspend fun getLocations(page: Int? = null) {
         viewModelScope.launch {
             if (filterName.isNullOrBlank() &&
                 filterDimension.isNullOrBlank() &&
                 filterType.isNullOrBlank()
             ) {
-                useCase.getLocationsList(page=page)
+                useCase.getLocationsList(page = page)
             } else {
                 useCase.getLocationsListWithFilter(
-                    page=page,
+                    page = page,
                     dimension = filterDimension,
                     name = filterName,
                     type = filterType
@@ -69,15 +68,19 @@ class ViewModelLocationsList @Inject constructor(
                         _state.value = state.value.copy(error = response.message)
                     }
                     is ResponseData.Loading -> {
-                        _state.value = state.value.copy(isLoading = response.isLoading)
-                    }
+                        if (state.value.locations.isEmpty()) {
+                            _state.value = state.value.copy(isLoading = response.isLoading)
+                        } else {
+                            _state.value = state.value.copy(isLoadingItem = response.isLoading)
+                        }                    }
                     is ResponseData.Success -> {
-                        _state.value = state.value.copy(locations = state.value.locations)
+                        _state.value = state.value.copy(locations = response.data, error = null)
                     }
                 }
             }
         }
     }
+
     fun onEvent(eventUi: EventUILocationsList) {
         when (eventUi) {
             is EventUILocationsList.Filter -> {
@@ -102,10 +105,19 @@ class ViewModelLocationsList @Inject constructor(
                 }
             }
             is EventUILocationsList.SelectItem -> {
-                if (isSelected(eventUi.id))
-                    selectedList.remove(eventUi.id)
-                else
-                    selectedList.add(eventUi.id)
+                val selectCount = state.value.selectCount
+                val newList = state.value.locations.toMutableList().map {
+                    if (it.id == eventUi.location.id)
+                        it.copy(select = eventUi.location.select.not())
+                    else
+                        it
+                }
+                _state.value = state.value.copy(
+                    locations = newList,
+                    selectCount = if (eventUi.location.select)
+                        selectCount - 1
+                    else selectCount + 1
+                )
             }
 
             EventUILocationsList.LoadNextPage -> {
@@ -115,28 +127,39 @@ class ViewModelLocationsList @Inject constructor(
             }
             EventUILocationsList.OpenLocationsListWithDetailsScreen -> {
                 viewModelScope.launch {
-                    val idList = Gson().toJson(selectedList)
-                    _event.emit(EventViewModelLocationsList.OpenLocationsListWithDetailsScreen(idList))
+                    val list = ArrayList<String>()
+                    state.value.locations.forEach {
+                        if (it.select) {
+                            list.add(it.id)
+                            it.select = false
+                        }
+                    }
+                    if (list.isEmpty())
+                        _event.emit(EventViewModelLocationsList.ShowToast("You have not any selected data"))
+                    else {
+                        val idList = Gson().toJson(list, List::class.java)
+                        _event.emit(EventViewModelLocationsList.OpenLocationsListWithDetailsScreen(idList))
+                    }
+                    _state.value = _state.value.copy(selectCount = 0)
                 }
             }
             EventUILocationsList.ClearSelectedItem -> {
-                selectedList.clear()
-                _state.value = state.value.copy()
+                val newList = state.value.locations.toMutableList().map {
+                    it.copy(select = false)
+                }
+                _state.value = _state.value.copy(locations = newList, selectCount = 0)
             }
-        }
-    }
 
-    fun isSelected(id: String): Boolean {
-        if (selectedList.isEmpty())
-            return false
-        return selectedList.contains(id)
+        }
     }
 
 
     data class StateScreenViewModelLocationsList(
         val isLoading: Boolean = false,
+        val isLoadingItem: Boolean = false,
         val error: String? = null,
-        val locations: List<LocationsListData> = emptyList()
+        val locations: List<LocationsListData> = emptyList(),
+        val selectCount: Int = 0
     )
 
     sealed class EventUILocationsList {
@@ -148,13 +171,12 @@ class ViewModelLocationsList @Inject constructor(
             val type: String? = null
         ) : EventUILocationsList()
 
-        data class SelectItem(val id: String) : EventUILocationsList()
-
-        object ClearSelectedItem : EventUILocationsList()
+        data class SelectItem(val location: LocationsListData) : EventUILocationsList()
 
         object LoadList : EventUILocationsList()
 
         object OpenLocationsListWithDetailsScreen : EventUILocationsList()
+        object ClearSelectedItem : EventUILocationsList()
 
         object LoadNextPage : EventUILocationsList()
     }

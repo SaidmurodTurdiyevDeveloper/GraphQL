@@ -3,10 +3,10 @@ package uz.graphql.ricky_and_morty_presenter.screens.characters
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,7 +35,10 @@ import uz.graphql.ricky_and_morty_domen.model.character.CharactersListData
 import uz.graphql.ricky_and_morty_presenter.navigation.ScreenRoutes
 import uz.graphql.ricky_and_morty_presenter.screens.characters.views.ItemViewCharacter
 import uz.graphql.ricky_and_morty_presenter.ui.RadiGroupButton
+import uz.graphql.ricky_and_morty_presenter.ui.theme.Blue
 import uz.graphql.ricky_and_morty_presenter.ui.theme.ButtonColor
+import uz.graphql.ricky_and_morty_presenter.ui.theme.Orange
+import uz.graphql.ricky_and_morty_presenter.ui.theme.White
 import uz.graphql.ricky_and_morty_presenter.utils.DefaultScreenError
 import uz.graphql.ricky_and_morty_presenter.utils.DefaultScreenLoading
 import uz.graphql.ricky_and_morty_presenter.vieewModels.characters.ViewModelCharactersList
@@ -69,7 +73,6 @@ fun ScreenCharactersList(
         mutableStateOf(false)
     }
 
-
     LaunchedEffect(key1 = true) {
         viewModel.event.collectLatest { event ->
             when (event) {
@@ -95,6 +98,7 @@ fun ScreenCharactersList(
                 title = {
                     Text(text = "Characters")
                 },
+                backgroundColor = if (isSystemInDarkTheme()) Color.DarkGray else White,
                 actions = {
                     if (state.selectCount == 0)
                         IconButton(onClick = {
@@ -200,7 +204,7 @@ fun ScreenCharactersList(
                     sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                     sheetState = bottomSheetState,
                     sheetContent = {
-                        FilterScreen(viewModel = viewModel, scope = scope, bottomSheetState = bottomSheetState)
+                        FilterCharacterScreen(viewModel = viewModel, scope = scope, bottomSheetState = bottomSheetState)
                     }) {
                     if (state.characters.isNotEmpty()) {
                         CharacterListScreen(
@@ -238,10 +242,10 @@ fun ScreenCharactersList(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FilterScreen(
+private fun FilterCharacterScreen(
     viewModel: ViewModelCharactersList,
     scope: CoroutineScope,
-    bottomSheetState: ModalBottomSheetState
+    bottomSheetState: ModalBottomSheetState,
 ) {
     var gender = ""
     var status = ""
@@ -343,11 +347,13 @@ fun FilterScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
-                        .background(ButtonColor, shape = RoundedCornerShape(8.dp))
+                        .background(if (isSystemInDarkTheme()) Orange else Blue, shape = RoundedCornerShape(8.dp))
                 ) {
                     TextButton(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
+                            Log.d("TTTTDD","Click ishladi")
+
                             scope.launch {
                                 bottomSheetState.hide()
                             }
@@ -362,7 +368,7 @@ fun FilterScreen(
                             )
                         }
                     ) {
-                        Text(text = "Filter", fontSize = 18.sp)
+                        Text(text = "Filter", fontSize = 18.sp, color = if (isSystemInDarkTheme()) Color.Black else White, fontWeight = FontWeight.Bold)
                     }
                 }
             }

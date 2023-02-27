@@ -1,7 +1,11 @@
 package uz.graphql.ricky_and_morty_presenter.utils
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +26,7 @@ fun DefaultScreenError(
     errorMessageColor: Color = Color.Red,
     errorTextSize: TextUnit = 16.sp,
     errorTextFontWeight: FontWeight = FontWeight.Bold,
-    block:()->Unit={}
+    block: (() -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -39,5 +43,12 @@ fun DefaultScreenError(
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
+        if (block != null)
+            Spacer(modifier = Modifier.height(16.dp))
+        IconButton(onClick = {
+            block?.invoke()
+        }) {
+            Icon(imageVector = Icons.Default.Refresh, contentDescription = "Icon refresh", tint = errorMessageColor)
+        }
     }
 }

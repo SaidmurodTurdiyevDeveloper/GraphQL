@@ -26,7 +26,9 @@ import androidx.navigation.compose.rememberNavController
 import uz.graphql.ricky_and_morty_presenter.model.BottomNavItem
 import uz.graphql.ricky_and_morty_presenter.navigation.RickyAndMortyNavGraph
 import uz.graphql.ricky_and_morty_presenter.navigation.ScreenRoutes
+import uz.graphql.ricky_and_morty_presenter.ui.theme.Blue
 import uz.graphql.ricky_and_morty_presenter.ui.theme.Orange
+import uz.graphql.ricky_and_morty_presenter.ui.theme.White
 
 /**
  * Created by Saidmurod Turdiyev (S.M.T) on 2/22/2023 3:56 PM for Ricky And Morty.
@@ -92,11 +94,11 @@ fun BottomNavigationBar(
     onItemClick: (BottomNavItem) -> Unit
 ) {
 
-    val selectedColor = if (isSystemInDarkTheme()) Orange else Color.Green
+    val selectedColor = if (isSystemInDarkTheme()) Orange else Blue
     val unSelectedColor = if (isSystemInDarkTheme()) Color.LightGray else Color.Gray
     BottomNavigation(
         modifier = modifier,
-        backgroundColor = if (isSystemInDarkTheme()) Color.DarkGray else Color.White,
+        backgroundColor = if (isSystemInDarkTheme()) Color.DarkGray else White,
         elevation = 5.dp,
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()

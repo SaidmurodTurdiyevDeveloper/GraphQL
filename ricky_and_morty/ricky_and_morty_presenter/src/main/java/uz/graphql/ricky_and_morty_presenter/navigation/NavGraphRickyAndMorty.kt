@@ -42,7 +42,7 @@ fun RickyAndMortyNavGraph(
             ScreenLocationsList(navController = navController)
         }
         composable(
-            route = ScreenRoutes.Character.CharacterDetailsScreen(MoveIdConstants.moveCharacterId).route,
+            route = ScreenRoutes.Character.CharacterDetailsScreen(id = MoveIdConstants.moveCharacterId, inputNavHost = true).route,
             arguments = listOf(
                 navArgument(
                     name = MoveIdConstants.moveCharacterId
@@ -53,54 +53,64 @@ fun RickyAndMortyNavGraph(
         ) {
             ScreenCharacterDetails(navController = navController)
         }
-        composable(route = ScreenRoutes.Character.CharactersListDetailsScreen(MoveIdConstants.moveCharactersIdsList).route,
+        composable(
+            route = ScreenRoutes.Character.CharactersListDetailsScreen(idsListGson = MoveIdConstants.moveCharactersIdsList, inputNavHost = true).route,
             arguments = listOf(
                 navArgument(
                     name = MoveIdConstants.moveCharactersIdsList
                 ) {
                     type = NavType.StringType
                     defaultValue = ""
-                })) {
+                })
+        ) {
             ScreenCharactersListWithDetails(navController = navController)
         }
-        composable(route = ScreenRoutes.Episode.EpisodeDetailsScreen(MoveIdConstants.moveEpisodeId).route,
+        composable(
+            route = ScreenRoutes.Episode.EpisodeDetailsScreen(id = MoveIdConstants.moveEpisodeId, inputNavHost = true).route,
             arguments = listOf(
                 navArgument(
                     name = MoveIdConstants.moveEpisodeId
                 ) {
                     type = NavType.StringType
                     defaultValue = ""
-                })) {
+                })
+        ) {
             ScreenEpisodeDetails(navController = navController)
         }
-        composable(route = ScreenRoutes.Episode.EpisodesListDetailsScreen(MoveIdConstants.moveEpisodesIdsList).route,
+        composable(
+            route = ScreenRoutes.Episode.EpisodesListDetailsScreen(idsListGson = MoveIdConstants.moveEpisodesIdsList, inputNavHost = true).route,
             arguments = listOf(
                 navArgument(
                     name = MoveIdConstants.moveEpisodesIdsList
                 ) {
                     type = NavType.StringType
                     defaultValue = ""
-                })) {
+                })
+        ) {
             ScreenEpisodesListWithDetails(navController = navController)
         }
-        composable(route = ScreenRoutes.Location.LocationDetailsScreen(MoveIdConstants.moveLocationId).route,
+        composable(
+            route = ScreenRoutes.Location.LocationDetailsScreen(id = MoveIdConstants.moveLocationId, inputNavHost = true).route,
             arguments = listOf(
                 navArgument(
                     name = MoveIdConstants.moveLocationId
                 ) {
                     type = NavType.StringType
                     defaultValue = ""
-                })) {
+                })
+        ) {
             ScreenLocationDetails(navController = navController)
         }
-        composable(route = ScreenRoutes.Location.LocationsListDetailsScreen(MoveIdConstants.moveLocationsIdsList).route,
+        composable(
+            route = ScreenRoutes.Location.LocationsListDetailsScreen(idsListGson = MoveIdConstants.moveLocationsIdsList, inputNavHost = true).route,
             arguments = listOf(
                 navArgument(
                     name = MoveIdConstants.moveLocationsIdsList
                 ) {
                     type = NavType.StringType
                     defaultValue = ""
-                })) {
+                })
+        ) {
             ScreenLocationsListWithDetails(navController = navController)
         }
     }
